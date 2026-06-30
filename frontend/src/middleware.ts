@@ -1,15 +1,19 @@
-export const config = {
-  matcher: ["/user/:path*", "/admin/:path*"],
-};
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default function middleware(req) {
-  const token = req.cookies.get("access_token");
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get("access_token")?.value;
   const url = req.nextUrl;
 
+  // Protect user routes
   if (url.pathname.startsWith("/user") && !token) {
-    const loginUrl = new URL("/user/login", url);
-    return Response.redirect(loginUrl);
+    const loginUrl = new URL("/user/login", url.origin);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/user/:path*"],
+};
