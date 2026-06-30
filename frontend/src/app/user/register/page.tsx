@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,51 +35,61 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={handleRegister} className="bg-slate-800 p-8 rounded-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
-        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700 rounded border border-slate-600 text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700 rounded border border-slate-600 text-white"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700 rounded border border-slate-600 text-white"
-              required
-              minLength={8}
-            />
-          </div>
-          <button type="submit" className="btn-primary w-full">
-            Sign Up
-          </button>
-        </div>
-        <p className="text-center text-sm text-slate-400 mt-4">
-          Already have an account?{" "}
-          <a href="/user/login" className="text-red-400 hover:underline">
-            Login
-          </a>
-        </p>
-      </form>
+      <Card className="w-full max-w-md bg-slate-800 border-slate-700">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl text-white">Create Account</CardTitle>
+          <CardDescription className="text-slate-400">
+            Join LiveRoar to watch live sports
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleRegister} className="space-y-4">
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-slate-400">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-slate-700 border-slate-600 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-slate-400">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-slate-700 border-slate-600 text-white"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-slate-400">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-slate-700 border-slate-600 text-white"
+                required
+                minLength={8}
+              />
+            </div>
+            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+              Sign Up
+            </Button>
+          </form>
+          <p className="text-center text-sm text-slate-400 mt-4">
+            Already have an account?{" "}
+            <Link href="/user/login" className="text-red-400 hover:underline">
+              Login
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

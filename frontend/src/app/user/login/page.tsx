@@ -2,8 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
-import { API_URL } from "@/lib/config";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,41 +39,50 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={handleLogin} className="bg-slate-800 p-8 rounded-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login to LiveRoar</h1>
-        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700 rounded border border-slate-600 text-white"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700 rounded border border-slate-600 text-white"
-              required
-            />
-          </div>
-          <button type="submit" className="btn-primary w-full">
-            Login
-          </button>
-        </div>
-        <p className="text-center text-sm text-slate-400 mt-4">
-          Don&apos;t have an account?{" "}
-          <a href="/user/register" className="text-red-400 hover:underline">
-            Sign up
-          </a>
-        </p>
-      </form>
+      <Card className="w-full max-w-md bg-slate-800 border-slate-700">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl text-white">Login to LiveRoar</CardTitle>
+          <CardDescription className="text-slate-400">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-slate-400">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-slate-700 border-slate-600 text-white"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-slate-400">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-slate-700 border-slate-600 text-white"
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+              Login
+            </Button>
+          </form>
+          <p className="text-center text-sm text-slate-400 mt-4">
+            Don&apos;t have an account?{" "}
+            <Link href="/user/register" className="text-red-400 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
