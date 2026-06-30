@@ -89,30 +89,8 @@ export default function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-red-600/20 blur-[150px] rounded-full" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full" />
 
-        {/* ─── Bolt-style Glowing Orb (full-width hero element) ─── */}
-        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-start overflow-hidden" style={{ zIndex: 0 }}>
-          {/* Thin line from very top */}
-          <div className="w-px h-[42%] bg-gradient-to-b from-transparent via-slate-400/25 to-red-400/40" />
-          
-          {/* Glowing orb — centered around the line end */}
-          <div className="relative -mt-px">
-            {/* Outer ambient glow — huge soft aura */}
-            <div className="w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/8 blur-[100px] absolute left-1/2 top-1/2" />
-            {/* Mid glow */}
-            <div className="w-[300px] h-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/15 blur-[60px] absolute left-1/2 top-1/2" />
-            {/* Inner glow */}
-            <div className="w-[120px] h-[120px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[20px] absolute left-1/2 top-1/2 shadow-[0_0_60px_12px_rgba(239,68,68,0.35)]" />
-            {/* Core orb */}
-            <div className="w-6 h-6 sm:w-7 sm:h-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-400 absolute left-1/2 top-1/2 shadow-[0_0_40px_8px_rgba(255,255,255,0.45),0_0_80px_20px_rgba(239,68,68,0.3)]">
-              {/* Specular highlight */}
-              <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] rounded-full bg-white/95" />
-            </div>
-          </div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-24 sm:pt-28 sm:pb-32">
-          {/* Badge — push down below orb */}
-          <div className="flex justify-center mb-8 mt-8 sm:mt-12">
+        <div className="relative max-w-7xl mx-auto px-4 pt-16 pb-24 sm:pt-24 sm:pb-32">
+          <div className="flex justify-center mb-8">
             <Badge variant="live" className="text-sm px-4 py-1.5 gap-2 flex items-center">
               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
               LIVE NOW — Premier League, IPL & UFC Pay-Per-View
@@ -260,22 +238,22 @@ export default function Home() {
         {/* Background glow */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.03] to-transparent pointer-events-none" />
 
-        {/* Bolt-style Glowing Orb — hanging line + layered glow */}
-        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-start overflow-hidden" style={{ zIndex: 0 }}>
-          {/* Thin line from top */}
-          <div className="w-px h-[30%] bg-gradient-to-b from-transparent via-slate-400/20 to-red-400/30" />
-          
+        {/* Bolt-style Glowing Orb */}
+        <div className="absolute inset-0 pointer-events-none flex flex-col items-center" style={{ zIndex: 0 }}>
+          {/* Thin vertical line */}
+          <div className="w-px h-[100px] bg-gradient-to-b from-transparent via-slate-400/20 to-red-400/30 mt-8" />
+
           {/* Glowing orb */}
-          <div className="relative -mt-px">
-            {/* Outer ambient glow */}
-            <div className="w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/10 blur-[100px] absolute left-1/2 top-1/2" />
-            {/* Mid glow */}
-            <div className="w-[250px] h-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/15 blur-[60px] absolute left-1/2 top-1/2" />
-            {/* Inner glow */}
-            <div className="w-[100px] h-[100px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[16px] absolute left-1/2 top-1/2 shadow-[0_0_50px_10px_rgba(239,68,68,0.3)]" />
-            {/* Core orb */}
-            <div className="w-5 h-5 sm:w-6 sm:h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-400 absolute left-1/2 top-1/2 shadow-[0_0_30px_6px_rgba(255,255,255,0.4),0_0_60px_15px_rgba(239,68,68,0.25)]">
-              <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] rounded-full bg-white/95" />
+          <div className="relative -mt-px mt-2">
+            {/* Layer 1 — Outer ambient glow: wide soft halo */}
+            <div className="w-[480px] h-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/20 blur-[90px] absolute left-1/2 top-1/2" />
+            {/* Layer 2 — Mid glow: medium concentrated ring */}
+            <div className="w-[220px] h-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/30 blur-[50px] absolute left-1/2 top-1/2" />
+            {/* Layer 3 — Inner glow: bright tight sphere */}
+            <div className="w-[90px] h-[90px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[14px] absolute left-1/2 top-1/2 shadow-[0_0_45px_10px_rgba(239,68,68,0.4)]" />
+            {/* Layer 4 — Core orb: white-hot center */}
+            <div className="w-5 h-5 sm:w-6 sm:h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-400 absolute left-1/2 top-1/2 shadow-[0_0_25px_5px_rgba(255,255,255,0.5),0_0_55px_14px_rgba(239,68,68,0.35)]">
+              <div className="absolute top-[16%] left-[20%] w-[30%] h-[30%] rounded-full bg-white/98" />
             </div>
           </div>
         </div>
@@ -340,17 +318,26 @@ export default function Home() {
 
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1.5 h-1.5 bg-red-500/30 rounded-full particle particle-delay-{i % 5}"
-              style={{
-                top: `${15 + (i * 12) % 70}%`,
-                left: `${10 + (i * 17) % 80}%`,
-                animationDelay: `${i * 0.6}s`,
-              }}
-            />
-          ))}
+          {(() => {
+            const delayClasses = [
+              'particle-delay-1',
+              'particle-delay-2',
+              'particle-delay-3',
+              'particle-delay-4',
+              'particle-delay-5',
+            ];
+            return [...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className={`absolute w-1.5 h-1.5 bg-red-500/30 rounded-full particle ${delayClasses[(i % 5)]}`}
+                style={{
+                  top: `${15 + (i * 12) % 70}%`,
+                  left: `${10 + (i * 17) % 80}%`,
+                  animationDelay: `${i * 0.6}s`,
+                }}
+              />
+            ));
+          })()}
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4">
