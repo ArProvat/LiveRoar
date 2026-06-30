@@ -6,15 +6,6 @@ const nextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/matches",
-        permanent: false,
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;
