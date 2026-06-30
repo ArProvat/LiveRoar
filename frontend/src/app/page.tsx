@@ -288,26 +288,177 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-14">
+      <section className="py-20 sm:py-28 relative overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.02] to-transparent" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-600/5 blur-[120px] rounded-full float-slow" />
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-orange-600/5 blur-[100px] rounded-full float-medium" />
+
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1.5 h-1.5 bg-red-500/30 rounded-full particle particle-delay-{i % 5}"
+              style={{
+                top: `${15 + (i * 12) % 70}%`,
+                left: `${10 + (i * 17) % 80}%`,
+                animationDelay: `${i * 0.6}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">GET STARTED IN 30 SECONDS</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold">Watch in Three Simple Steps</h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              From sign-up to your first goal — it takes less time than brewing coffee.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connector line */}
-            <div className="hidden md:block absolute top-16 left-[16.66%] right-[16.66%] h-0.5 bg-gradient-to-r from-red-600/50 via-red-500/30 to-red-600/50" />
+          <div className="relative grid md:grid-cols-3 gap-8 lg:gap-12 items-start">
+            {/* Animated SVG connector */}
+            <svg
+              className="hidden md:block absolute top-14 left-[16.66%] right-[16.66%] h-8 pointer-events-none"
+              style={{ zIndex: 0 }}
+            >
+              <defs>
+                <linearGradient id="connectorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#dc2626" stopOpacity="0" />
+                  <stop offset="20%" stopColor="#dc2626" stopOpacity="0.8" />
+                  <stop offset="50%" stopColor="#ef4444" stopOpacity="1" />
+                  <stop offset="80%" stopColor="#dc2626" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#dc2626" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {/* Base line */}
+              <line
+                x1="0"
+                y1="16"
+                x2="100%"
+                y2="16"
+                stroke="url(#connectorGrad)"
+                strokeWidth="2"
+                strokeOpacity="0.3"
+              />
+              {/* Animated flowing dash */}
+              <line
+                x1="0"
+                y1="16"
+                x2="100%"
+                y2="16"
+                stroke="url(#connectorGrad)"
+                strokeWidth="2.5"
+                strokeDasharray="8 12"
+                className="connector-flow"
+              />
+            </svg>
 
-            {howItWorks.map((item) => (
-              <div key={item.step} className="relative text-center">
-                <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center text-2xl font-bold mx-auto mb-6 relative z-10">
-                  {item.step}
+            {/* Step 1 — Sign Up */}
+            <div className="relative flex flex-col items-center step-card glow-sweep bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/60 p-8 group cursor-default z-10">
+              {/* Sparkle dots */}
+              <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full sparkle" />
+              <div className="absolute -bottom-1 -left-3 w-2 h-2 bg-orange-400/60 rounded-full sparkle" style={{ animationDelay: '1s' }} />
+
+              {/* Step number with 3D flip + ripple rings */}
+              <div className="relative mb-8">
+                {/* Ripple rings */}
+                <div className="absolute inset-0 -m-3 rounded-full border-2 border-red-500/30 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite]" />
+                <div className="absolute inset-0 -m-3 rounded-full border border-red-500/20 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite_0.8s]" />
+
+                {/* Number circle */}
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center step-number-flip step-number-flip-delay-1 shadow-lg shadow-red-600/30 group-hover:shadow-red-600/50 transition-shadow">
+                  <span className="text-3xl font-black text-white">{howItWorks[0].step}</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed max-w-xs mx-auto">{item.description}</p>
               </div>
-            ))}
+
+              {/* Icon */}
+              <div className="mb-5 step-icon-hover">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/10 border border-red-500/20 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5v3m-6.75 4.5h3.75a2.25 2.25 0 012.25 2.25v4.5M19 10.5v6m-6.75-6H6a2.25 2.25 0 00-2.25 2.25v3.75A2.25 2.25 0 006 20.25h6.75M19 21v-1.5m-6.75 1.5H19M3.75 3.75h16.5" />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-3 text-white">{howItWorks[0].title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-xs text-center step-desc">
+                {howItWorks[0].description}
+              </p>
+            </div>
+
+            {/* Step 2 — Pick Your Sport */}
+            <div className="relative flex flex-col items-center step-card glow-sweep bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/60 p-8 group cursor-default z-10">
+              {/* Sparkle dots */}
+              <div className="absolute -top-3 right-1/4 w-2 h-2 bg-yellow-400/60 rounded-full sparkle" style={{ animationDelay: '0.5s' }} />
+              <div className="absolute -bottom-2 left-1/3 w-2.5 h-2.5 bg-orange-400/40 rounded-full sparkle" style={{ animationDelay: '1.5s' }} />
+
+              {/* Step number with 3D flip + ripple rings */}
+              <div className="relative mb-8">
+                <div className="absolute inset-0 -m-3 rounded-full border-2 border-red-500/30 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite]" />
+                <div className="absolute inset-0 -m-3 rounded-full border border-red-500/20 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite_0.8s]" />
+
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center step-number-flip step-number-flip-delay-2 shadow-lg shadow-red-600/30 group-hover:shadow-red-600/50 transition-shadow">
+                  <span className="text-3xl font-black text-white">{howItWorks[1].step}</span>
+                </div>
+              </div>
+
+              {/* Icon with sport emojis */}
+              <div className="mb-5 step-icon-hover">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/10 border border-red-500/20 flex items-center justify-center overflow-hidden">
+                  <span className="text-2xl">⚽🏏🥊</span>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-3 text-white">{howItWorks[1].title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-xs text-center step-desc">
+                {howItWorks[1].description}
+              </p>
+            </div>
+
+            {/* Step 3 — Watch & Cheer */}
+            <div className="relative flex flex-col items-center step-card glow-sweep bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-800/60 p-8 group cursor-default z-10">
+              {/* Sparkle dots */}
+              <div className="absolute -top-2 -left-2 w-3 h-3 bg-green-400/60 rounded-full sparkle" style={{ animationDelay: '0.8s' }} />
+              <div className="absolute -bottom-1 right-2 w-2 h-2 bg-red-400/50 rounded-full sparkle" style={{ animationDelay: '1.8s' }} />
+
+              {/* Step number with 3D flip + ripple rings */}
+              <div className="relative mb-8">
+                <div className="absolute inset-0 -m-3 rounded-full border-2 border-red-500/30 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite]" />
+                <div className="absolute inset-0 -m-3 rounded-full border border-red-500/20 animate-[ringRipple_2.5s_cubic-bezier(0.22,1,0.36,1)_infinite_0.8s]" />
+
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center step-number-flip step-number-flip-delay-3 shadow-lg shadow-red-600/30 group-hover:shadow-red-600/50 transition-shadow">
+                  <span className="text-3xl font-black text-white">{howItWorks[2].step}</span>
+                </div>
+              </div>
+
+              {/* Icon */}
+              <div className="mb-5 step-icon-hover">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/10 border border-red-500/20 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-3 text-white">{howItWorks[2].title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-xs text-center step-desc">
+                {howItWorks[2].description}
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-14 text-center">
+            <Link href="/user/register">
+              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-6 gap-2 h-auto shadow-lg shadow-red-600/20 group">
+                <Play className="w-5 h-5 fill-current" />
+                Start Your First Match
+                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

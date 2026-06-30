@@ -260,6 +260,135 @@
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
     animation: badgePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* ══════════════════════════════════════════════
+     HOW IT WORKS — Advanced Creative Animations
+     ══════════════════════════════════════════════ */
+
+  /* 3D perspective number flip entrance */
+  .step-number-flip {
+    animation: numberFlip 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Staggered delay for step numbers */
+  .step-number-flip-delay-1 { animation-delay: 0.15s; }
+  .step-number-flip-delay-2 { animation-delay: 0.3s; }
+  .step-number-flip-delay-3 { animation-delay: 0.45s; }
+
+  /* Outer ring ripple cascade */
+  .step-ring-ripple::before,
+  .step-ring-ripple::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(220, 38, 38, 0.5);
+    animation: ringRipple 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .step-ring-ripple::after {
+    animation-delay: 0.8s;
+  }
+
+  /* Spring bounce card entrance — left card */
+  .card-spring-left {
+    animation: slideInLeftSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-left-delay { animation-delay: 0.35s; }
+
+  /* Spring bounce card entrance — right card */
+  .card-spring-right {
+    animation: slideInRightSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-right-delay { animation-delay: 0.55s; }
+
+  /* Spring bounce card entrance — center card */
+  .card-spring-center {
+    animation: slideInLeftSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-center-delay { animation-delay: 0.45s; }
+
+  /* Connector flowing dash */
+  .connector-flow {
+    stroke-dasharray: 8 12;
+    animation: dashFlow 1s linear infinite;
+  }
+
+  /* Floating particles */
+  .particle {
+    animation: particleFloat 4s ease-in-out infinite;
+  }
+
+  .particle-delay-1 { animation-delay: 0s; }
+  .particle-delay-2 { animation-delay: 1s; }
+  .particle-delay-3 { animation-delay: 2s; }
+  .particle-delay-4 { animation-delay: 0.5s; }
+  .particle-delay-5 { animation-delay: 1.5s; }
+
+  /* Glow sweep on hover */
+  .glow-sweep {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+  }
+
+  .glow-sweep::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.06), transparent);
+    transition: left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glow-sweep:hover::before {
+    left: 150%;
+  }
+
+  /* Icon bounce on hover */
+  .step-icon-hover {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover .step-icon-hover {
+    transform: translateY(-6px) scale(1.15);
+  }
+
+  /* Description highlight on hover */
+  .step-desc {
+    transition: color 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover .step-desc {
+    color: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px);
+  }
+
+  /* Sparkle dot pulse */
+  .sparkle-dot {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* Magnetic lift on hover */
+  .step-card {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 24px 64px -16px rgba(220, 38, 38, 0.25);
+  }
 }
 
 @keyframes fadeInUp {
@@ -379,5 +508,124 @@
   }
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+/* ── How It Works: advanced animations ── */
+
+/* 3D number flip */
+@keyframes numberFlip {
+  0% {
+    transform: perspective(600px) rotateY(-90deg) scale(0.5);
+    opacity: 0;
+  }
+  40% {
+    transform: perspective(600px) rotateY(15deg) scale(1.1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: perspective(600px) rotateY(-5deg) scale(0.98);
+  }
+  100% {
+    transform: perspective(600px) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Outer ring ripple cascade */
+@keyframes ringRipple {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+    border-width: 3px;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* Stagger-in from sides */
+@keyframes slideInLeftSpring {
+  0% {
+    transform: translateX(-80px) translateY(20px);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(8px) translateY(-4px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(-3px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRightSpring {
+  0% {
+    transform: translateX(80px) translateY(20px);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(-8px) translateY(-4px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(3px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Connector draw-in */
+@keyframes connectorDraw {
+  from {
+    stroke-dashoffset: var(--connector-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Particle float */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-15px) translateX(8px) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-8px) translateX(-6px) scale(0.8);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-20px) translateX(4px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Glow sweep */
+@keyframes glowSweep {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Connector animated dash */
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -20;
   }
 }
