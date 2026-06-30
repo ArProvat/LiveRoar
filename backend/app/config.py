@@ -1,11 +1,16 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, field_validator
 from typing import List
+import json
+import os
+
+# Ensure .env is loaded from project root
+_env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
 
 
 class Settings(BaseSettings):
-    database_url: str = Field(alias="DATABASE_URL")
-    jwt_secret_key: str = Field(alias="JWT_SECRET_KEY")
+    database_url: str
+    jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
@@ -23,9 +28,17 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     sentry_dsn: str = ""
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, value):
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return [v.strip() for v in value.split(",")]
+        return value
 
 
 settings = Settings()

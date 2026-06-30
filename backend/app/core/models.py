@@ -29,8 +29,6 @@ class BaseModel:
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    __mapper_args__ = {"confirm_deprecated_sa_2_0": False}
-
 
 class User(BaseModel, Base):
     __tablename__ = "users"
