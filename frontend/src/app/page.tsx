@@ -83,15 +83,57 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-slate-950">
         {/* Background gradient effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-blue-600/10" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-red-600/20 blur-[150px] rounded-full" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
+
+        {/* ─── Glowing Orb (Bolt-style hero element) ─── */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Thin line from top to orb */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[45%] bg-gradient-to-b from-transparent via-red-400/30 to-red-500/50" />
+          
+          {/* Orb glow layers */}
+          <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+            {/* Outer ambient — huge soft glow */}
+            <div className="w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full bg-red-600/5 blur-[120px] absolute -top-[50%] -left-[50%]" />
+            {/* Mid ambient glow */}
+            <div className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-red-500/10 blur-[80px] absolute -top-[50%] -left-[50%]" />
+            {/* Inner bright glow */}
+            <div className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[30px] absolute -top-[50%] -left-[50%] shadow-[0_0_80px_15px_rgba(239,68,68,0.35)]" />
+            {/* Core — bright white-red center */}
+            <div className="w-[40px] h-[40px] sm:w-[56px] sm:h-[56px] rounded-full bg-gradient-to-br from-white via-red-200 to-red-400 absolute -top-[50%] -left-[50%] shadow-[0_0_30px_5px_rgba(255,255,255,0.5)]" />
+            {/* Tiny specular highlight */}
+            <div className="w-[10px] h-[10px] sm:w-[14px] sm:h-[14px] rounded-full bg-white absolute top-[22%] left-[28%] opacity-90" />
+          </div>
+
+          {/* Subtle floating particles around orb */}
+          <div className="absolute top-[35%] left-[35%] w-1 h-1 bg-red-400/40 rounded-full float-slow" />
+          <div className="absolute top-[50%] left-[60%] w-1.5 h-1.5 bg-red-500/30 rounded-full float-medium" />
+          <div className="absolute top-[40%] left-[70%] w-1 h-1 bg-orange-400/40 rounded-full float-fast" />
+          <div className="absolute top-[55%] left-[45%] w-1.5 h-1.5 bg-red-400/25 rounded-full float-slow" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-[30%] left-[55%] w-1 h-1 bg-red-300/30 rounded-full float-medium" style={{ animationDelay: '1s' }} />
+        </div>
 
         <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-24 sm:pt-28 sm:pb-32">
+          {/* Hero — Glowing Red Orb (Bolt-style) */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
+            {/* Thin line from top center */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[40%] bg-gradient-to-b from-transparent via-red-400/50 to-red-400/20" />
+            {/* Main orb glow */}
+            <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+              {/* Outer ambient glow */}
+              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-red-600/10 blur-[100px]" />
+              {/* Mid glow */}
+              <div className="absolute inset-8 sm:inset-12 rounded-full bg-red-500/20 blur-[60px]" />
+              {/* Inner bright core */}
+              <div className="absolute inset-20 sm:inset-24 rounded-full bg-gradient-to-br from-white via-red-300 to-red-500 blur-sm shadow-[0_0_60px_10px_rgba(239,68,68,0.4)]" />
+              {/* Tiny bright center dot */}
+              <div className="absolute inset-[42%] sm:inset-[40%] rounded-full bg-white blur-[2px]" />
+            </div>
+          </div>
+
           {/* Badge */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-8 relative" style={{ zIndex: 1 }}>
             <Badge variant="live" className="text-sm px-4 py-1.5 gap-2 flex items-center">
               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
               LIVE NOW — Premier League, IPL & UFC Pay-Per-View
