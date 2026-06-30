@@ -1,5 +1,432 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Play,
+  Zap,
+  Users,
+  Globe,
+  Trophy,
+  Monitor,
+  Bell,
+  MessageCircle,
+  Shield,
+  ChevronRight,
+  Star,
+  TrendingUp,
+  Wifi,
+} from "lucide-react";
+
+const sports = [
+  { name: "Football", icon: "⚽", color: "from-green-500/20 to-green-600/5", border: "border-green-500/30" },
+  { name: "Cricket", icon: "🏏", color: "from-yellow-500/20 to-yellow-600/5", border: "border-yellow-500/30" },
+  { name: "UFC", icon: "🥊", color: "from-red-500/20 to-red-600/5", border: "border-red-500/30" },
+  { name: "Basketball", icon: "🏀", color: "from-orange-500/20 to-orange-600/5", border: "border-orange-500/30" },
+  { name: "Tennis", icon: "🎾", color: "from-lime-500/20 to-lime-600/5", border: "border-lime-500/30" },
+  { name: "More Sports", icon: "🏆", color: "from-purple-500/20 to-purple-600/5", border: "border-purple-500/30" },
+];
+
+const features = [
+  {
+    icon: Zap,
+    title: "Ultra-Low Latency",
+    description: "Watch every goal, wicket, and knockout as it happens. Our HLS player delivers streams with minimal delay so you never miss a moment.",
+  },
+  {
+    icon: Monitor,
+    title: "Crystal HD Quality",
+    description: "Adaptive bitrate streaming ensures the best possible quality on any connection — from mobile data to gigabit fiber.",
+  },
+  {
+    icon: Users,
+    title: "Live Fan Chat",
+    description: "Celebrate, debate, and cheer with fans who share your passion. Real-time chat powered by WebSockets brings the stadium energy home.",
+  },
+  {
+    icon: Bell,
+    title: "Never Miss a Match",
+    description: "Set reminders for your favorite teams and tournaments. Get notified before kickoff so you're always first in the stands.",
+  },
+  {
+    icon: Globe,
+    title: "Watch Anywhere",
+    description: "Seamless experience across desktop, tablet, and mobile. Your favorites and watch history sync across every device.",
+  },
+  {
+    icon: Shield,
+    title: "Safe & Reliable",
+    description: "Secure authentication, encrypted streams, and a platform built to handle peak match-day traffic without breaking a sweat.",
+  },
+];
+
+const stats = [
+  { value: "10K+", label: "Active Fans" },
+  { value: "500+", label: "Live Matches / Month" },
+  { value: "24/7", label: "Coverage" },
+  { value: "60fps", label: "Smooth Streams" },
+];
+
+const howItWorks = [
+  { step: "1", title: "Sign Up Free", description: "Create your account in seconds. No credit card required to start watching." },
+  { step: "2", title: "Pick Your Sport", description: "Browse live and upcoming matches across football, cricket, UFC, basketball, and more." },
+  { step: "3", title: "Watch & Cheer", description: "Click any match to start streaming. Jump into live chat and feel the roar with thousands of fans." },
+];
+
+const testimonials = [
+  { name: "Alex M.", text: "Finally a platform that brings everything together. I canceled three separate services and just use LiveRoar now.", avatar: "AM" },
+  { name: "Sarah K.", text: "The low-latency streaming is a game changer. I'm not on spoilers anymore — every match feels truly live.", avatar: "SK" },
+  { name: "James R.", text: "The live chat makes watching even better. It's like having a stadium seat with the best fans in the world.", avatar: "JR" },
+];
 
 export default function Home() {
-  redirect("/matches");
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background gradient effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-blue-600/10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-red-600/20 blur-[150px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full" />
+
+        <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-24 sm:pt-28 sm:pb-32">
+          {/* Badge */}
+          <div className="flex justify-center mb-8">
+            <Badge variant="live" className="text-sm px-4 py-1.5 gap-2 flex items-center">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              LIVE NOW — Premier League, IPL & UFC Pay-Per-View
+            </Badge>
+          </div>
+
+          {/* Main heading */}
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+              Your Front Row
+              <br />
+              to Every{" "}
+              <span className="bg-gradient-to-r from-red-400 via-red-500 to-orange-500 bg-clip-text text-transparent">
+                Live Moment
+              </span>
+            </h1>
+
+            <p className="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              Watch football, cricket, UFC, basketball, and more — all in one place.
+              Real-time streams, live chat with fans, and never miss a match with instant reminders.
+            </p>
+
+            {/* CTA buttons */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/user/register">
+                <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-6 text-base gap-2 h-auto">
+                  <Play className="w-5 h-5 fill-current" />
+                  Start Watching Free
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Link href="/matches">
+                <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8 py-6 text-base h-auto">
+                  Browse Matches
+                </Button>
+              </Link>
+            </div>
+
+            {/* Social proof */}
+            <div className="mt-10 flex items-center justify-center gap-6 text-sm text-slate-500">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              <span>Trusted by 10,000+ sports fans</span>
+            </div>
+          </div>
+
+          {/* Hero visual — floating match cards */}
+          <div className="mt-16 relative max-w-5xl mx-auto">
+            <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 shadow-2xl shadow-red-600/5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Match card 1 */}
+                <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 hover:border-red-500/50 transition-colors cursor-pointer">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="live" className="text-[10px] px-2 py-0.5">LIVE</Badge>
+                    <span className="text-xs text-slate-500">72'</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🔵</div>
+                      <p className="text-sm font-medium">Chelsea</p>
+                    </div>
+                    <div className="text-center px-4">
+                      <p className="text-2xl font-bold text-red-400">2 — 1</p>
+                      <p className="text-[10px] text-slate-500">Premier League</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🔴</div>
+                      <p className="text-sm font-medium">Arsenal</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Match card 2 */}
+                <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 hover:border-red-500/50 transition-colors cursor-pointer">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="live" className="text-[10px] px-2 py-0.5">LIVE</Badge>
+                    <span className="text-xs text-slate-500">Ovr 15</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🇮🇳</div>
+                      <p className="text-sm font-medium">India</p>
+                    </div>
+                    <div className="text-center px-4">
+                      <p className="text-2xl font-bold text-red-400">187/3</p>
+                      <p className="text-[10px] text-slate-500">IPL</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🇦🇺</div>
+                      <p className="text-sm font-medium">Aus</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Match card 3 */}
+                <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 rounded-xl p-4 border border-red-500/30">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge className="text-[10px] px-2 py-0.5 bg-orange-500 text-white">TONIGHT 9PM</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🇺🇸</div>
+                      <p className="text-sm font-medium">Crawford</p>
+                    </div>
+                    <div className="text-center px-4">
+                      <p className="text-lg font-bold text-orange-400">VS</p>
+                      <p className="text-[10px] text-slate-400">UFC PPV</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">🇧🇷</div>
+                      <p className="text-sm font-medium">Silva</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Glow effect under cards */}
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-16 bg-red-600/20 blur-[60px] rounded-full" />
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="relative border-y border-slate-800/50 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Sports Categories */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">ALL SPORTS, ONE PLATFORM</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold">Every Game. Every League. One App.</h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              From the Premier League to the IPL, UFC Fight Night to the NBA — find it all here.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {sports.map((sport) => (
+              <Link
+                key={sport.name}
+                href="/matches"
+                className={`group relative bg-gradient-to-br ${sport.color} border ${sport.border} rounded-xl p-6 text-center hover:scale-105 transition-transform cursor-pointer`}
+              >
+                <div className="text-4xl mb-3">{sport.icon}</div>
+                <p className="font-medium text-sm">{sport.name}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 sm:py-28 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">WHY LIVE ROAR</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold">Built for Fans Who Live the Game</h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              Every feature is designed to bring the stadium experience straight to your screen.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature) => (
+              <Card key={feature.title} className="bg-slate-800/40 border-slate-700/50 hover:border-red-500/30 transition-colors group">
+                <CardContent className="pt-6">
+                  <div className="w-12 h-12 rounded-lg bg-red-600/10 border border-red-500/20 flex items-center justify-center mb-4 group-hover:bg-red-600/20 transition-colors">
+                    <feature.icon className="w-6 h-6 text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">GET STARTED IN 30 SECONDS</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold">Watch in Three Simple Steps</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            {/* Connector line */}
+            <div className="hidden md:block absolute top-16 left-[16.66%] right-[16.66%] h-0.5 bg-gradient-to-r from-red-600/50 via-red-500/30 to-red-600/50" />
+
+            {howItWorks.map((item) => (
+              <div key={item.step} className="relative text-center">
+                <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center text-2xl font-bold mx-auto mb-6 relative z-10">
+                  {item.step}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed max-w-xs mx-auto">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 sm:py-28 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">LOVED BY FANS</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold">What Our Community Says</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <Card key={t.name} className="bg-slate-800/40 border-slate-700/50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-slate-300 leading-relaxed mb-6">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-sm font-bold">
+                      {t.avatar}
+                    </div>
+                    <span className="font-medium text-sm">{t.name}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 sm:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-600/10 blur-[120px] rounded-full" />
+
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center mx-auto mb-8">
+            <TrendingUp className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
+            Ready to Feel the{" "}
+            <span className="bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">Roar</span>?
+          </h2>
+          <p className="mt-6 text-lg text-slate-400 max-w-xl mx-auto">
+            Join thousands of sports fans who&apos;ve made LiveRoar their home for live sports. Free to start, impossible to leave.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/user/register">
+              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-10 py-6 text-base gap-2 h-auto shadow-lg shadow-red-600/25">
+                Create Free Account
+                <Play className="w-5 h-5 fill-current" />
+              </Button>
+            </Link>
+            <Link href="/matches">
+              <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-10 py-6 text-base h-auto">
+                Explore Matches First
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+            {/* Brand */}
+            <div className="sm:col-span-2 md:col-span-1">
+              <p className="text-xl font-bold text-red-500 mb-3">🔴 LiveRoar</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Watch. Feel. Roar. Your front row to every live match.
+              </p>
+            </div>
+
+            {/* Platform */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4 text-slate-300">Platform</h4>
+              <ul className="space-y-2.5 text-sm text-slate-500">
+                <li><Link href="/matches" className="hover:text-white transition-colors">Live Matches</Link></li>
+                <li><Link href="/channels" className="hover:text-white transition-colors">Channels</Link></li>
+                <li><Link href="/matches" className="hover:text-white transition-colors">Upcoming</Link></li>
+                <li><Link href="/user/register" className="hover:text-white transition-colors">Sign Up</Link></li>
+              </ul>
+            </div>
+
+            {/* Sports */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4 text-slate-300">Sports</h4>
+              <ul className="space-y-2.5 text-sm text-slate-500">
+                <li><Link href="/matches" className="hover:text-white transition-colors">Football</Link></li>
+                <li><Link href="/matches" className="hover:text-white transition-colors">Cricket</Link></li>
+                <li><Link href="/matches" className="hover:text-white transition-colors">UFC</Link></li>
+                <li><Link href="/matches" className="hover:text-white transition-colors">Basketball</Link></li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4 text-slate-300">Company</h4>
+              <ul className="space-y-2.5 text-sm text-slate-500">
+                <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Terms</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-slate-600">© {new Date().getFullYear()} LiveRoar. Watch. Feel. Roar.</p>
+            <p className="text-xs text-slate-700">Only stream content with proper broadcasting rights.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
