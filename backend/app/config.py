@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     sentry_dsn: str = ""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=_env_path, env_file_encoding="utf-8", extra="ignore")
 
     @field_validator("cors_origins", mode="before")
     @classmethod

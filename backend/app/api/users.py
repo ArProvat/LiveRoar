@@ -33,7 +33,7 @@ async def update_profile(
     return current_user
 
 
-@router.get("/me/favorites", response_model=List[Match])
+@router.get("/me/favorites", response_model=None)
 async def get_favorites(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -44,10 +44,29 @@ async def get_favorites(
         .where(Favorite.user_id == current_user.id)
         .order_by(Match.start_time.desc())
     )
-    return result.scalars().all()
+    return [
+        {
+            "id": m.id,
+            "title": m.title,
+            "description": m.description,
+            "sport_category": m.sport_category,
+            "status": m.status,
+            "start_time": m.start_time,
+            "end_time": m.end_time,
+            "team_a": m.team_a,
+            "team_b": m.team_b,
+            "league": m.league,
+            "thumbnail_url": m.thumbnail_url,
+            "hls_url": m.hls_url,
+            "viewers": m.viewers,
+            "is_featured": m.is_featured,
+            "created_at": m.created_at,
+        }
+        for m in result.scalars().all()
+    ]
 
 
-@router.post("/me/favorites/{match_id}")
+@router.post("/me/favorites/{match_id}", response_model=None)
 async def add_favorite(
     match_id: str,
     current_user: User = Depends(get_current_user),
@@ -63,7 +82,7 @@ async def add_favorite(
     return {"success": True, "match_id": match_id}
 
 
-@router.delete("/me/favorites/{match_id}")
+@router.delete("/me/favorites/{match_id}", response_model=None)
 async def remove_favorite(
     match_id: str,
     current_user: User = Depends(get_current_user),
@@ -84,7 +103,7 @@ async def remove_favorite(
     return {"success": True, "match_id": match_id}
 
 
-@router.get("/me/history")
+@router.get("/me/history", response_model=None)
 async def get_history(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -95,4 +114,13 @@ async def get_history(
         .order_by(WatchHistory.watched_at.desc())
         .limit(50)
     )
-    return result.scalars().all()
+    return [
+        {
+            "id": h.id,
+            "match_id": h.match_id,
+            "watched_at": h.watched_at,
+            "progress": h.progress,
+            "duration_watched": h.duration_watched,
+        }
+        for h in result.scalars().all()
+    ]
