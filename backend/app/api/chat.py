@@ -2,11 +2,9 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, HTTPExcept
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import json
-import redis.asyncio as aioredis
 
-from app.database import get_db
-from app.core.models import ChatMessage, Match
-from app.core.auth import get_optional_user
+from app.database import get_db, async_session
+from app.core.models import ChatMessage
 from app.config import settings
 
 router = APIRouter()
@@ -44,12 +42,7 @@ manager = ConnectionManager()
 
 
 @router.websocket("/{match_id}")
-async def websocket_chat(
-    websocket: WebSocket,
-    match_id: str,
-    token: str = Query(None),
-    db: AsyncSession = Depends(get_db),
-):
+async def websocket_chat(websocket: WebSocket, match_id: str, token: str = Query(None)):
     # Validate optional auth token
     username = "Anonymous"
     user_id = None
@@ -58,14 +51,8 @@ async def websocket_chat(
         from app.core.security import decode_token
         payload = decode_token(token)
         if payload and payload.get("sub"):
-            user_result = await db.execute(
-                select(ChatMessage).where(
-                    ChatMessage.user_id == payload["sub"]
-                )
-            )
-            # Use token subject as username
-            username = f"User_{payload['sub'][:8]}"
             user_id = payload["sub"]
+            username = f"User_{payload['sub'][:8]}"
 
     await manager.connect(match_id, websocket)
 
@@ -85,7 +72,6 @@ async def websocket_chat(
                 message=message_text,
                 match_id=match_id,
             )
-            from app.database import async_session
             async with async_session() as save_db:
                 save_db.add(chat_msg)
                 await save_db.commit()

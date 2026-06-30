@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.core.models import User
 from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
+from app.core.auth import get_current_user
 from app.schemas.auth import UserCreate, UserOut, TokenPair, TokenRefresh
 
 router = APIRouter()
@@ -38,8 +39,8 @@ async def login(body: UserCreate, db: AsyncSession = Depends(get_db)):
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account disabled")
 
-    access_token = create_access_token({"sub": str(user.id), "role": user.role})
-    refresh_token = create_refresh_token({"sub": str(user.id)})
+    access_token = create_access_token({"sub": user.id, "role": user.role})
+    refresh_token = create_refresh_token({"sub": user.id})
 
     return TokenPair(access_token=access_token, refresh_token=refresh_token)
 
@@ -50,7 +51,11 @@ async def refresh(body: TokenRefresh):
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
-    user_result = await get_user_from_token(payload["sub"])
+    from app.database import async_session
+    async with async_session() as session:
+        result = await session.execute(select(User).where(User.id == payload["sub"]))
+        user_result = result.scalar_one_or_none()
+
     if not user_result:
         raise HTTPException(status_code=401, detail="User not found")
 
@@ -63,26 +68,3 @@ async def refresh(body: TokenRefresh):
 @router.get("/me", response_model=UserOut)
 async def get_me(user: User = Depends(get_current_user)):
     return user
-
-
-@router.get("/token")
-async def get_token():
-    """Test endpoint to verify token works."""
-    return {"message": "Token is valid"}
-
-
-async def get_user_from_token(sub: str) -> User:
-    from app.database import async_session
-    async with async_session() as session:
-        result = await session.execute(select(User).where(User.id == sub))
-        return result.scalar_one_or_none()
-
-
-async def get_current_user(
-    token: str = Depends(lambda x: x),
-    db: AsyncSession = Depends(get_db),
-) -> User:
-    """Dependency that extracts and validates JWT token from Authorization header."""
-    from fastapi import Header
-    # This will be replaced by a proper dependency in the actual file
-    pass

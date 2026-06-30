@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0f172a;
+    --foreground: #f8fafc;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium
+           hover:bg-red-700 transition-colors cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-medium
+           hover:bg-slate-700 transition-colors cursor-pointer;
+  }
+
+  .badge-live {
+    @apply inline-flex items-center gap-1 bg-red-600 text-white text-xs
+           font-bold px-2 py-0.5 rounded-full animate-pulse;
+  }
+}

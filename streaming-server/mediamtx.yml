@@ -1,0 +1,36 @@
+logLevel: info
+logDestinations: [stdout]
+
+readTimeout: 10s
+writeTimeout: 10s
+writeQueueSize: 512
+
+rtsp: true
+rtspTransports: [udp, multicast, tcp]
+rtspEncryption: "no"
+rtspAddress: :8554
+
+rtmp: true
+rtmpEncryption: "no"
+rtmpAddress: :1935
+
+hls: true
+hlsAddress: :8888
+hlsEncryption: false
+hlsVariant: lowLatency
+hlsSegmentCount: 3
+hlsSegmentDuration: 2s
+
+webrtc: true
+webrtcAddress: :8889
+webrtcEncryption: false
+
+srt: true
+srtAddress: :8890
+
+pathDefaults:
+  source: publisher
+  overridePublisher: true
+
+paths:
+  all_others:
