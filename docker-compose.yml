@@ -16,6 +16,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - liveroar
 
   # ========= Redis =========
   redis:
@@ -30,24 +32,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - liveroar
 
   # ========= Streaming Server (MediaMTX) =========
   mediamtx:
     image: bluenviron/mediamtx:latest
     container_name: liveroar-streaming
     ports:
-      - "1935:1935"   # RTMP ingest
-      - "8888:8888/tcp"  # HLS
-      - "8889:8889/tcp"  # WebRTC
-      - "8189:8189/udp"  # WebRTC
-      - "9000:9000/tcp"  # HTTP desc
-      - "9001:9001/udp"  # RTSP
-      - "9002:9002/tcp"  # RTP
-      - "9003:9003/udp"  # RTCP
+      - "1935:1935"
+      - "8888:8888"
+      - "8889:8889"
+      - "8189:8189/udp"
     volumes:
-      - ./mediamtx.yml:/mediamtx.yml
-      - stream_data:/streams
+      - ./streaming-server/mediamtx.yml:/mediamtx.yml:ro
     restart: unless-stopped
+    networks:
+      - liveroar
 
   # ========= Backend (FastAPI) =========
   backend:
@@ -60,16 +61,16 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/liveroar
       REDIS_URL: redis://redis:6379/0
-      JWT_SECRET_KEY: dev-secret-key-change-in-production
+      JWT_SECRET_KEY: dev-secret-key-change-in-production-liveroar-2026
       CORS_ORIGINS: '["http://localhost:3000"]'
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
     restart: unless-stopped
+    networks:
+      - liveroar
 
   # ========= Frontend (Next.js) =========
   frontend:
@@ -86,8 +87,13 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - liveroar
+
+networks:
+  liveroar:
+    driver: bridge
 
 volumes:
   postgres_data:
   redis_data:
-  stream_data:

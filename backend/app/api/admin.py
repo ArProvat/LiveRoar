@@ -41,7 +41,7 @@ async def get_dashboard(
     }
 
 
-@router.post("/matches", response_model=Match)
+@router.post("/matches", response_model=None)
 async def create_match(
     body: MatchCreate,
     admin: User = Depends(require_admin),
@@ -51,10 +51,15 @@ async def create_match(
     db.add(match)
     await db.flush()
     await db.refresh(match)
-    return match
+    return {
+        "id": match.id,
+        "title": match.title,
+        "status": match.status,
+        "start_time": match.start_time,
+    }
 
 
-@router.put("/matches/{match_id}")
+@router.put("/matches/{match_id}", response_model=None)
 async def update_match(
     match_id: str,
     body: MatchUpdate,
@@ -74,10 +79,10 @@ async def update_match(
     db.add(match)
     await db.flush()
     await db.refresh(match)
-    return match
+    return {"success": True, "match_id": match_id}
 
 
-@router.post("/streams/generate-key")
+@router.post("/streams/generate-key", response_model=None)
 async def generate_stream_key(
     admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
@@ -99,7 +104,7 @@ async def generate_stream_key(
     }
 
 
-@router.get("/streams/status")
+@router.get("/streams/status", response_model=None)
 async def get_stream_status(
     admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
@@ -126,32 +131,30 @@ async def get_stream_status(
     ]
 
 
-@router.get("/users")
+@router.get("/users", response_model=None)
 async def list_users(
     admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
-    from app.database import async_session
-    async with async_session() as session:
-        result = await session.execute(
-            select(User).order_by(User.created_at.desc()).limit(100)
-        )
-        users = result.scalars().all()
+    result = await db.execute(
+        select(User).order_by(User.created_at.desc()).limit(100)
+    )
+    users = result.scalars().all()
 
-        return [
-            {
-                "id": u.id,
-                "name": u.name,
-                "email": u.email,
-                "role": u.role,
-                "is_active": u.is_active,
-                "created_at": u.created_at.isoformat() if u.created_at else None,
-            }
-            for u in users
-        ]
+    return [
+        {
+            "id": u.id,
+            "name": u.name,
+            "email": u.email,
+            "role": u.role,
+            "is_active": u.is_active,
+            "created_at": u.created_at.isoformat() if u.created_at else None,
+        }
+        for u in users
+    ]
 
 
-@router.get("/chat/moderation")
+@router.get("/chat/moderation", response_model=None)
 async def chat_moderation(
     admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
