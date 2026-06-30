@@ -256,8 +256,31 @@ export default function Home() {
       </section>
 
       {/* Sports Categories */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="relative py-20 sm:py-28 overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.03] to-transparent pointer-events-none" />
+
+        {/* Bolt-style Glowing Orb — hanging line + layered glow */}
+        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-start overflow-hidden" style={{ zIndex: 0 }}>
+          {/* Thin line from top */}
+          <div className="w-px h-[30%] bg-gradient-to-b from-transparent via-slate-400/20 to-red-400/30" />
+          
+          {/* Glowing orb */}
+          <div className="relative -mt-px">
+            {/* Outer ambient glow */}
+            <div className="w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/10 blur-[100px] absolute left-1/2 top-1/2" />
+            {/* Mid glow */}
+            <div className="w-[250px] h-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/15 blur-[60px] absolute left-1/2 top-1/2" />
+            {/* Inner glow */}
+            <div className="w-[100px] h-[100px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[16px] absolute left-1/2 top-1/2 shadow-[0_0_50px_10px_rgba(239,68,68,0.3)]" />
+            {/* Core orb */}
+            <div className="w-5 h-5 sm:w-6 sm:h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-400 absolute left-1/2 top-1/2 shadow-[0_0_30px_6px_rgba(255,255,255,0.4),0_0_60px_15px_rgba(239,68,68,0.25)]">
+              <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] rounded-full bg-white/95" />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4" style={{ zIndex: 1 }}>
           <div className="text-center mb-14">
             <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">ALL SPORTS, ONE PLATFORM</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold">Every Game. Every League. One App.</h2>
