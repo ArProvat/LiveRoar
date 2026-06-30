@@ -1,0 +1,35 @@
+# MediaMTX Configuration for LiveRoar
+# Streaming server that converts RTMP → HLS in real-time
+
+rtmp:
+  address: :1935
+  # Allow RTMP ingest from OBS and other encoders
+
+hls:
+  address: :8888
+  protocol: hls
+  # HLS segment settings for low latency
+  segmentDuration: 2s
+  maxHeight: 720
+  # Keep only last 3 segments in memory for low latency
+  indexSize: 3
+  # Directory for HLS segments
+  directory: streams
+
+webmuxpath: /
+# Webserver address
+readTimeout: 10s
+readBufferSize: 1024
+
+# Logging
+logLevel: info
+# logDestinations: ["stdout","file"]
+
+# CORS for web browser access
+# (handled by frontend CORS in FastAPI)
+
+# Enable HLS player endpoint at /live/{streamkey}
+hlsVariant: lowLatency
+hlsStoragePath: streams
+hlsSegmentCount: 3
+hlsSegmentDuration: 2s
