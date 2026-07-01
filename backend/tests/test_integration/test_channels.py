@@ -4,6 +4,7 @@ import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
 from app import app
 from app.database import Base, get_db
 
@@ -28,7 +29,12 @@ def _engine(test_db_url):
 @pytest.fixture(scope="session", autouse=True)
 async def _seed_db(_engine):
     async with _engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        tables = [
+            "users", "channels", "matches", "favorites",
+            "watch_history", "chat_messages", "notifications",
+        ]
+        for t in tables:
+            await conn.execute(text(f"DROP TABLE IF EXISTS {t}"))
         await conn.run_sync(Base.metadata.create_all)
     yield _engine
     await _engine.dispose()
