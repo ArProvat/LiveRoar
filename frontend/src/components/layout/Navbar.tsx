@@ -18,7 +18,7 @@ const navLinks = [
   { href: "/matches", label: "Matches" },
   { href: "/channels", label: "Channels" },
   {
-    label: "Sports",
+    label: "Sport",
     children: [
       { href: "/matches?sport_category=football", label: "Football" },
       { href: "/matches?sport_category=cricket", label: "Cricket" },
