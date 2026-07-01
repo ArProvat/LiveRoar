@@ -79,7 +79,9 @@ export default function Navbar() {
     if (cached) {
       setUser(JSON.parse(cached));
       setAuthChecked(true);
+      return;
     }
+
     fetchUser();
   }, [fetchUser]);
 
@@ -128,9 +130,12 @@ export default function Navbar() {
                 {link.children ? (
                   <>
                     <button
+                      type="button"
                       onMouseEnter={() => setOpenDropdown(i)}
                       onMouseLeave={() => setOpenDropdown(null)}
-                      className="flex items-center gap-1 text-sm text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-1 text-sm text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                      aria-haspopup="menu"
+                      aria-expanded={openDropdown === i}
                     >
                       {link.label}
                       <ChevronDown
@@ -173,8 +178,12 @@ export default function Navbar() {
                 {/* User Avatar + Dropdown */}
                 <div className="relative">
                   <button
+                    type="button"
                     onClick={() => setOpenDropdown(openDropdown === 99 ? null : 99)}
-                    className="flex items-center gap-2 group"
+                    className="flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-red-500/50 rounded-full"
+                    aria-haspopup="menu"
+                    aria-expanded={openDropdown === 99}
+                    aria-label="User menu"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-white text-xs font-bold ring-2 ring-transparent group-hover:ring-red-500/40 transition-all">
                       {user.avatar_url ? (
@@ -207,6 +216,7 @@ export default function Navbar() {
                         Profile
                       </Link>
                       <button
+                        type="button"
                         onClick={() => { setOpenDropdown(null); handleLogout(); }}
                         className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
                       >
@@ -239,8 +249,11 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors"
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? (
               <X className="w-5 h-5 text-white" />
@@ -328,6 +341,7 @@ export default function Navbar() {
                   </Button>
                 </Link>
                 <button
+                  type="button"
                   onClick={() => { setMobileOpen(false); handleLogout(); }}
                   className="w-full"
                 >

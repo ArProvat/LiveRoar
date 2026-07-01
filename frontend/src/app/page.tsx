@@ -156,7 +156,7 @@ export default function Home() {
           <div className="max-w-2xl">
             <Badge className="border border-red-400/20 bg-red-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-red-100">
               <Sparkles className="mr-2 h-3.5 w-3.5" />
-              Live sports, redesigned
+              Live sports, Roared up
             </Badge>
 
             <h1 className="mt-6 text-5xl font-semibold tracking-[-0.05em] sm:text-6xl lg:text-7xl">
