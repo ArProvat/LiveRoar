@@ -629,3 +629,29 @@
     stroke-dashoffset: -20;
   }
 }
+
+/* ── Sports Carousel ── */
+
+/* Glowing orb for section */
+@keyframes orbPulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* Card entrance */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

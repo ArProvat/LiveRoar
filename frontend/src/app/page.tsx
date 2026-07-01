@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import SportsCarousel from "@/components/SportsCarousel";
 import {
   Play,
   Zap,
@@ -17,15 +18,6 @@ import {
   TrendingUp,
   Wifi,
 } from "lucide-react";
-
-const sports = [
-  { name: "Football", icon: "⚽", color: "from-green-500/20 to-green-600/5", border: "border-green-500/30" },
-  { name: "Cricket", icon: "🏏", color: "from-yellow-500/20 to-yellow-600/5", border: "border-yellow-500/30" },
-  { name: "UFC", icon: "🥊", color: "from-red-500/20 to-red-600/5", border: "border-red-500/30" },
-  { name: "Basketball", icon: "🏀", color: "from-orange-500/20 to-orange-600/5", border: "border-orange-500/30" },
-  { name: "Tennis", icon: "🎾", color: "from-lime-500/20 to-lime-600/5", border: "border-lime-500/30" },
-  { name: "More Sports", icon: "🏆", color: "from-purple-500/20 to-purple-600/5", border: "border-purple-500/30" },
-];
 
 const features = [
   {
@@ -233,54 +225,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sports Categories */}
-      <section className="relative py-20 sm:py-28 overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.03] to-transparent pointer-events-none" />
-
-        {/* Bolt-style Glowing Orb */}
-        <div className="absolute inset-0 pointer-events-none flex flex-col items-center" style={{ zIndex: 0 }}>
-          {/* Thin vertical line */}
-          <div className="w-px h-[100px] bg-gradient-to-b from-transparent via-slate-400/20 to-red-400/30 mt-8" />
-
-          {/* Glowing orb */}
-          <div className="relative -mt-px mt-2">
-            {/* Layer 1 — Outer ambient glow: wide soft halo */}
-            <div className="w-[480px] h-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/20 blur-[90px] absolute left-1/2 top-1/2" />
-            {/* Layer 2 — Mid glow: medium concentrated ring */}
-            <div className="w-[220px] h-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/30 blur-[50px] absolute left-1/2 top-1/2" />
-            {/* Layer 3 — Inner glow: bright tight sphere */}
-            <div className="w-[90px] h-[90px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-300 via-red-500 to-red-700 blur-[14px] absolute left-1/2 top-1/2 shadow-[0_0_45px_10px_rgba(239,68,68,0.4)]" />
-            {/* Layer 4 — Core orb: white-hot center */}
-            <div className="w-5 h-5 sm:w-6 sm:h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-400 absolute left-1/2 top-1/2 shadow-[0_0_25px_5px_rgba(255,255,255,0.5),0_0_55px_14px_rgba(239,68,68,0.35)]">
-              <div className="absolute top-[16%] left-[20%] w-[30%] h-[30%] rounded-full bg-white/98" />
-            </div>
-          </div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4" style={{ zIndex: 1 }}>
-          <div className="text-center mb-14">
-            <Badge variant="outline" className="mb-4 text-slate-400 border-slate-700">ALL SPORTS, ONE PLATFORM</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold">Every Game. Every League. One App.</h2>
-            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
-              From the Premier League to the IPL, UFC Fight Night to the NBA — find it all here.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {sports.map((sport) => (
-              <Link
-                key={sport.name}
-                href="/matches"
-                className={`group relative bg-gradient-to-br ${sport.color} border ${sport.border} rounded-xl p-6 text-center hover:scale-105 transition-transform cursor-pointer`}
-              >
-                <div className="text-4xl mb-3">{sport.icon}</div>
-                <p className="font-medium text-sm">{sport.name}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Sports Carousel */}
+      <SportsCarousel />
 
       {/* Features */}
       <section className="py-20 sm:py-28 bg-slate-900/50">
