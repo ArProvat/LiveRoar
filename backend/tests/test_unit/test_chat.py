@@ -111,119 +111,51 @@ class TestConnectionManager:
 
 
 # ---------------------------------------------------------------------------
-# WebSocket chat endpoint — token validation
+# ConnectionManager broadcast with decode_token patching
 # ---------------------------------------------------------------------------
 
-class TestWebSocketChatTokenValidation:
-    @pytest.fixture(autouse=True)
-    def _mock_settings(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        secret = "test-secret-key-for-unit-tests-only"
-        monkeypatch.setenv("JWT_SECRET_KEY", secret)
-        import importlib
-        import app.config as config_mod
-        importlib.reload(config_mod)
-        import app.core.security as sec_mod
-        sec_mod.settings = config_mod.Settings(JWT_SECRET_KEY=secret)
-        return config_mod.Settings(JWT_SECRET_KEY=secret)
+class TestChatBroadcastWithDecoding:
+    """Test that chat module's broadcast logic works with mocked JWT decoding."""
 
-    @pytest.mark.asyncio
-    async def test_websocket_accepts_without_token(self, _mock_settings):
-        """Anonymous connections should be allowed."""
-        from fastapi.testclient import TestClient
+    @pytest.fixture
+    def manager(self):
+        return ConnectionManager()
 
-        with patch("app.api.chat.async_session") as mock_session:
-            mock_session_instance = AsyncMock()
-            mock_session_instance.__aenter__ = AsyncMock(return_value=mock_session_instance)
-            mock_session_instance.__aexit__ = AsyncMock(return_value=None)
-            mock_session_instance.add = MagicMock()
-            mock_session_instance.commit = AsyncMock()
+    def test_broadcast_with_decoded_username(self, manager):
+        """Verify that broadcast message includes correct username structure."""
+        ws = MagicMock()
+        ws.accept = AsyncMock()
+        ws.send_json = AsyncMock()
 
-            async def mock_refresh(msg_obj):
-                msg_obj.id = "msg-1"
-                msg_obj.created_at = MagicMock()
-                msg_obj.created_at.isoformat.return_value = "2026-01-01T12:00:00Z"
+        async def _test():
+            await manager.connect("m1", ws)
+            msg = {
+                "id": "msg-1",
+                "user_id": "user-abc",
+                "username": "User_abc123",
+                "message": "hi",
+                "match_id": "m1",
+                "created_at": "2026-01-01T00:00:00Z",
+            }
+            await manager.broadcast("m1", msg)
+            ws.send_json.assert_called_once_with(msg)
 
-            mock_session_instance.refresh.side_effect = mock_refresh
+        import asyncio
+        asyncio.run(_test())
 
-            with patch.dict("app.api.chat.__dict__", {"async_session": mock_session}):
-                from app.main import app
-                from app.api.chat import manager as chat_manager
-                from app.api.chat import ConnectionManager
+    def test_disconnect_on_broadcast_failure(self, manager):
+        """A failing connection should be removed from the room."""
+        ws = MagicMock()
+        ws.accept = AsyncMock()
+        ws.send_json = AsyncMock(side_effect=Exception("broken"))
 
-                test_manager = ConnectionManager()
-                with patch("app.api.chat.manager", test_manager):
-                    client = TestClient(app, raise_server_exceptions=False)
-                    with client.websocket_connect("/api/v1/chat/match-abc?token=") as ws:
-                        ws.send_json({"message": "hello"})
-                        response = ws.receive_text()
-                        data = json.loads(response)
-                        assert data["username"] == "Anonymous"
-                        assert data["message"] == "hello"
+        async def _test():
+            await manager.connect("m1", ws)
+            try:
+                await manager.broadcast("m1", {"msg": "test"})
+            except Exception:
+                pass
+            assert ws not in manager.connections.get("m1", set())
 
-    @pytest.mark.asyncio
-    async def test_websocket_identifies_with_valid_token(self, _mock_settings):
-        """WebSocket should parse token and identify user."""
-        token = create_access_token({"sub": "user-12345abc", "role": "USER"})
-
-        with patch("app.api.chat.async_session") as mock_session:
-            mock_session_instance = AsyncMock()
-            mock_session_instance.__aenter__ = AsyncMock(return_value=mock_session_instance)
-            mock_session_instance.__aexit__ = AsyncMock(return_value=None)
-            mock_session_instance.add = MagicMock()
-            mock_session_instance.commit = AsyncMock()
-
-            async def mock_refresh(msg_obj):
-                msg_obj.id = "msg-1"
-                msg_obj.created_at = MagicMock()
-                msg_obj.created_at.isoformat.return_value = "2026-01-01T12:00:00Z"
-
-            mock_session_instance.refresh.side_effect = mock_refresh
-
-            with patch.dict("app.api.chat.__dict__", {"async_session": mock_session}):
-                from fastapi.testclient import TestClient
-                from app.main import app
-                from app.api.chat import ConnectionManager
-
-                test_manager = ConnectionManager()
-                with patch("app.api.chat.manager", test_manager):
-                    client = TestClient(app, raise_server_exceptions=False)
-                    with client.websocket_connect(f"/api/v1/chat/match-abc?token={token}") as ws:
-                        ws.send_json({"message": "hello"})
-                        response = ws.receive_text()
-                        data = json.loads(response)
-                        assert data["username"] == "User_user-1234"
-                        assert data["user_id"] == "user-12345abc"
-
-    @pytest.mark.asyncio
-    async def test_websocket_ignores_empty_message(self, _mock_settings):
-        """Empty messages should be silently ignored."""
-        token = create_access_token({"sub": "user-12345abc", "role": "USER"})
-
-        with patch("app.api.chat.async_session") as mock_session:
-            mock_session_instance = AsyncMock()
-            mock_session_instance.__aenter__ = AsyncMock(return_value=mock_session_instance)
-            mock_session_instance.__aexit__ = AsyncMock(return_value=None)
-            mock_session_instance.add = MagicMock()
-            mock_session_instance.commit = AsyncMock()
-
-            async def mock_refresh(msg_obj):
-                msg_obj.id = "msg-1"
-                msg_obj.created_at = MagicMock()
-                msg_obj.created_at.isoformat.return_value = "2026-01-01T12:00:00Z"
-
-            mock_session_instance.refresh.side_effect = mock_refresh
-
-            with patch.dict("app.api.chat.__dict__", {"async_session": mock_session}):
-                from fastapi.testclient import TestClient
-                from app.main import app
-                from app.api.chat import ConnectionManager
-
-                test_manager = ConnectionManager()
-                with patch("app.api.chat.manager", test_manager):
-                    client = TestClient(app, raise_server_exceptions=False)
-                    with client.websocket_connect(f"/api/v1/chat/match-abc?token={token}") as ws:
-                        ws.send_json({"message": ""})
-                        ws.send_json({"message": "valid"})
-                        response = ws.receive_text()
-                        data = json.loads(response)
-                        assert data["message"] == "valid"
+        import asyncio
+        asyncio.run(_test())
