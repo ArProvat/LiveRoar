@@ -34,7 +34,39 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.08), transparent 26%),
+      radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 22%),
+      #040816;
+    overflow-x: hidden;
+  }
+
+  .hero-noise {
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black, transparent 82%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 82%);
+  }
+
+  .hero-orb {
+    animation: orbPulse 8s ease-in-out infinite;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: rgba(239, 68, 68, 0.35);
+    color: #ffffff;
   }
 }
 
@@ -173,6 +205,52 @@
   .step-item:hover .step-circle {
     transform: scale(1.2);
     box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.15);
+  }
+
+  .timeline-step {
+    animation: timelineRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: relative;
+  }
+
+  .timeline-step:nth-child(1) { animation-delay: 0s; }
+  .timeline-step:nth-child(2) { animation-delay: 0.12s; }
+  .timeline-step:nth-child(3) { animation-delay: 0.24s; }
+
+  .timeline-step::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2px;
+    height: 2px;
+    background: linear-gradient(180deg, rgba(239,68,68,0.9), rgba(249,115,22,0.1));
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: timelineTrail 6s linear infinite;
+  }
+
+  .timeline-badge {
+    animation: timelineBadge 3.5s ease-in-out infinite;
+  }
+
+  .timeline-ring {
+    animation: timelinePulse 3.5s ease-in-out infinite;
+  }
+
+  .timeline-orb {
+    animation: timelineDot 2.8s ease-in-out infinite;
+  }
+
+  .timeline-step:nth-child(1)::before {
+    animation-delay: 0s;
+  }
+
+  .timeline-step:nth-child(2)::before {
+    animation-delay: 0.8s;
+  }
+
+  .timeline-step:nth-child(3)::before {
+    animation-delay: 1.6s;
   }
 
   /* Testimonial card hover */
@@ -562,6 +640,75 @@
   100% {
     transform: translateX(0) translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes timelineRise {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes timelineBadge {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 20px 50px rgba(239, 68, 68, 0.28);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 24px 60px rgba(239, 68, 68, 0.34);
+  }
+}
+
+@keyframes timelinePulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes timelineDot {
+  0%, 100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-50%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes timelineTrail {
+  0% {
+    transform: translate(-50%, -20px) scaleY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, 0) scaleY(1);
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, 20px) scaleY(0);
+    opacity: 0;
   }
 }
 

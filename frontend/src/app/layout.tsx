@@ -3,8 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 
 export const metadata: Metadata = {
-  title:
-    "LiveRoar — Watch Live Sports | Football, Cricket, UFC & More",
+  title: "LiveRoar - Watch Live Sports | Football, Cricket, UFC & More",
   description:
     "Your front row to every live match. Watch football, cricket, UFC, basketball, tennis, and more in HD. Real-time streams, live fan chat, and instant match reminders. Free to start.",
   keywords: [
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
     "watch cricket live",
   ],
   openGraph: {
-    title: "LiveRoar — Watch Live Sports | Your Front Row to Every Match",
+    title: "LiveRoar - Watch Live Sports | Your Front Row to Every Match",
     description:
       "Watch football, cricket, UFC, and more in HD with real-time streams, live fan chat, and instant match reminders. Free to start.",
     type: "website",
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LiveRoar — Watch Live Sports",
+    title: "LiveRoar - Watch Live Sports",
     description:
       "Your front row to every live match. Football, cricket, UFC, and more.",
   },
@@ -56,11 +55,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="bg-[#040816] text-white antialiased">
         <Navbar />
-        <div className="pt-0 sm:pt-16">
-          {children}
-        </div>
+        <div className="pt-0 sm:pt-16">{children}</div>
       </body>
     </html>
   );
