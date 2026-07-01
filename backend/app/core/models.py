@@ -152,12 +152,14 @@ class ChatMessage(BaseModel, Base):
 class Notification(BaseModel, Base):
     __tablename__ = "notifications"
 
-    user_id = Column(PGUUID(as_uuid=False), nullable=False, index=True)
+    user_id = Column(PGUUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     title = Column(String(200), nullable=False)
     body = Column(Text, nullable=False)
     is_read = Column(Boolean, default=False, index=True)
     link = Column(String(500), nullable=True)
     type = Column(String(30), nullable=True)  # MATCH_START, RESULT, etc.
+
+    user = relationship("User", back_populates="notifications")
 
 
 class StreamConfig(BaseModel, Base):

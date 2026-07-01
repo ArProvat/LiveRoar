@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from app.database import get_db
 from app.core.models import User
 from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
 from app.core.auth import get_current_user
-from app.schemas.auth import UserCreate, UserOut, TokenPair, TokenRefresh
+from app.schemas.auth import UserCreate, UserUpdate, UserOut, TokenPair, TokenRefresh
 
 router = APIRouter()
 
@@ -67,4 +68,16 @@ async def refresh(body: TokenRefresh):
 
 @router.get("/me", response_model=UserOut)
 async def get_me(user: User = Depends(get_current_user)):
+    return user
+
+
+@router.put("/me", response_model=UserOut)
+async def update_me(body: UserUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+    if body.name is not None:
+        user.name = body.name
+    if body.avatar_url is not None:
+        user.avatar_url = body.avatar_url
+    db.add(user)
+    await db.flush()
+    await db.refresh(user)
     return user

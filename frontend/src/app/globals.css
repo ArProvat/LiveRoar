@@ -6,31 +6,964 @@
   :root {
     --background: #0f172a;
     --foreground: #f8fafc;
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+    --popover: #1e293b;
+    --popover-foreground: #f8fafc;
+    --primary: #dc2626;
+    --primary-foreground: #ffffff;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #dc2626;
+    --accent-foreground: #ffffff;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #334155;
+    --input: #1e293b;
+    --ring: #dc2626;
+    --radius: 0.5rem;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(239, 68, 68, 0.08), transparent 26%),
+      radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 22%),
+      #040816;
+    overflow-x: hidden;
+  }
+
+  .hero-noise {
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black, transparent 82%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 82%);
+  }
+
+  .hero-orb {
+    animation: orbPulse 8s ease-in-out infinite;
+  }
+
+  .sports-book-orb-blue {
+    background: rgba(32, 168, 244, 0.24);
+  }
+
+  .sports-book-orb-pink {
+    background: rgba(246, 166, 215, 0.3);
+  }
+
+  .sports-book-orb-purple {
+    background: rgba(185, 167, 255, 0.28);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: rgba(239, 68, 68, 0.35);
+    color: #ffffff;
   }
 }
 
-@layer components {
+@layer utilities {
+  /* Entrance animations */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s var(--ease-out-expo) both;
+  }
+  
+  .animate-fade-in-up-delay-1 {
+    animation: fadeInUp 0.8s var(--ease-out-expo) 0.15s both;
+  }
+  
+  .animate-fade-in-up-delay-2 {
+    animation: fadeInUp 0.8s var(--ease-out-expo) 0.3s both;
+  }
+  
+  .animate-fade-in-up-delay-3 {
+    animation: fadeInUp 0.8s var(--ease-out-expo) 0.45s both;
+  }
+  
+  .animate-fade-in-up-delay-4 {
+    animation: fadeInUp 0.8s var(--ease-out-expo) 0.6s both;
+  }
+
+  /* Stagger animations */
+  .stagger-item:nth-child(1) { animation-delay: 0s; }
+  .stagger-item:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-item:nth-child(3) { animation-delay: 0.2s; }
+  .stagger-item:nth-child(4) { animation-delay: 0.3s; }
+  .stagger-item:nth-child(5) { animation-delay: 0.4s; }
+  .stagger-item:nth-child(6) { animation-delay: 0.5s; }
+
+  /* Button arrow slide */
+  .btn-arrow {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .btn:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Button ripple */
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium
-           hover:bg-red-700 transition-colors cursor-pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+  
+  .btn-primary:hover::before {
+    transform: translateX(100%);
   }
 
-  .btn-secondary {
-    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-medium
-           hover:bg-slate-700 transition-colors cursor-pointer;
+  /* Card hover lift */
+  .card-hover {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.4s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px -12px rgba(220, 38, 38, 0.3);
   }
 
+  /* Match card hover glow */
+  .match-card {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s ease,
+                border-color 0.3s ease;
+  }
+  
+  .match-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 32px -8px rgba(220, 38, 38, 0.4),
+                0 0 0 1px rgba(220, 38, 38, 0.2);
+  }
+
+  /* Sports card icon bounce */
+  .sports-card {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s ease;
+  }
+  
+  .sports-card:hover {
+    transform: translateY(-12px) scale(1.08);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  .sports-icon {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .sports-card:hover .sports-icon {
+    transform: scale(1.3) rotate(-5deg);
+  }
+
+  /* Feature icon pulse */
+  .feature-icon-wrapper {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.3s ease;
+  }
+  
+  .feature-card:hover .feature-icon-wrapper {
+    transform: scale(1.15) rotate(-3deg);
+  }
+
+  /* CTA button pulse */
+  .cta-pulse {
+    animation: ctaPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Stats counter hover */
+  .stat-number {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .stat-item:hover .stat-number {
+    transform: scale(1.15);
+  }
+
+  /* Step circle pulse */
+  .step-circle {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s ease;
+  }
+  
+  .step-item:hover .step-circle {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.15);
+  }
+
+  .timeline-step {
+    animation: timelineRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: relative;
+  }
+
+  .timeline-step:nth-child(1) { animation-delay: 0s; }
+  .timeline-step:nth-child(2) { animation-delay: 0.12s; }
+  .timeline-step:nth-child(3) { animation-delay: 0.24s; }
+
+  .timeline-step::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2px;
+    height: 2px;
+    background: linear-gradient(180deg, rgba(239,68,68,0.9), rgba(249,115,22,0.1));
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: timelineTrail 6s linear infinite;
+  }
+
+  .timeline-badge {
+    animation: timelineBadge 3.5s ease-in-out infinite;
+  }
+
+  .timeline-ring {
+    animation: timelinePulse 3.5s ease-in-out infinite;
+  }
+
+  .timeline-orb {
+    animation: timelineDot 2.8s ease-in-out infinite;
+  }
+
+  .timeline-step:nth-child(1)::before {
+    animation-delay: 0s;
+  }
+
+  .timeline-step:nth-child(2)::before {
+    animation-delay: 0.8s;
+  }
+
+  .timeline-step:nth-child(3)::before {
+    animation-delay: 1.6s;
+  }
+
+  /* Testimonial card hover */
+  .testimonial-card {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s ease;
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(220, 38, 38, 0.4);
+  }
+
+  /* Footer link slide */
+  .footer-link {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .footer-link:hover::after {
+    width: 100%;
+  }
+
+  /* Background float animation */
+  .float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+  
+  .float-medium {
+    animation: floatMedium 6s ease-in-out infinite;
+  }
+  
+  .float-fast {
+    animation: floatFast 4s ease-in-out infinite;
+  }
+
+  /* Gradient border animation */
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(var(--gradient-angle, 0deg), 
+      #dc2626, #ef4444, #f97316, #dc2626);
+    background-size: 300% 300%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 1px;
+  }
+
+  /* Shimmer effect */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255,255,255,0.08), 
+      transparent);
+    transform: translateX(-100%);
+  }
+  
+  .shimmer:hover::after {
+    animation: shimmer 1.5s ease-in-out;
+  }
+
+  /* Badge pulse glow */
   .badge-live {
-    @apply inline-flex items-center gap-1 bg-red-600 text-white text-xs
-           font-bold px-2 py-0.5 rounded-full animate-pulse;
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    animation: badgePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .sports-hero-copy {
+    animation: slideInLeft 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .sports-hero-cta {
+    animation: fadeInUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
+  }
+
+  .sports-book-page-content {
+    animation: sportsBookMaterialize 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center;
+  }
+
+  .sports-book-page-turn {
+    animation: sportsBookFlip 5s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  .sports-book-dot {
+    animation: sportsBookDotPulse 2.8s ease-in-out infinite;
+  }
+
+  .sports-book-ball {
+    animation: sportsBookBall 3.2s ease-in-out infinite;
+  }
+
+  .sports-book-float {
+    animation: sportsBookFloat 5.5s ease-in-out infinite;
+  }
+
+  .sports-book-float-short {
+    animation: sportsBookCharacter 2.8s ease-in-out infinite;
+  }
+
+  .sports-book-float-medium {
+    animation: sportsBookCharacter 3.4s ease-in-out infinite;
+  }
+
+  .sports-book-stadium {
+    animation: sportsBookGlow 4.6s ease-in-out infinite;
+  }
+
+  .sports-book-orb {
+    animation: sportsBookOrbFloat 8s ease-in-out infinite;
+  }
+
+  /* ══════════════════════════════════════════════
+     HOW IT WORKS — Advanced Creative Animations
+     ══════════════════════════════════════════════ */
+
+  /* 3D perspective number flip entrance */
+  .step-number-flip {
+    animation: numberFlip 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Staggered delay for step numbers */
+  .step-number-flip-delay-1 { animation-delay: 0.15s; }
+  .step-number-flip-delay-2 { animation-delay: 0.3s; }
+  .step-number-flip-delay-3 { animation-delay: 0.45s; }
+
+  /* Outer ring ripple cascade */
+  .step-ring-ripple::before,
+  .step-ring-ripple::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(220, 38, 38, 0.5);
+    animation: ringRipple 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .step-ring-ripple::after {
+    animation-delay: 0.8s;
+  }
+
+  /* Spring bounce card entrance — left card */
+  .card-spring-left {
+    animation: slideInLeftSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-left-delay { animation-delay: 0.35s; }
+
+  /* Spring bounce card entrance — right card */
+  .card-spring-right {
+    animation: slideInRightSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-right-delay { animation-delay: 0.55s; }
+
+  /* Spring bounce card entrance — center card */
+  .card-spring-center {
+    animation: slideInLeftSpring 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .card-spring-center-delay { animation-delay: 0.45s; }
+
+  /* Connector flowing dash */
+  .connector-flow {
+    stroke-dasharray: 8 12;
+    animation: dashFlow 1s linear infinite;
+  }
+
+  /* Floating particles */
+  .particle {
+    animation: particleFloat 4s ease-in-out infinite;
+  }
+
+  .particle-delay-1 { animation-delay: 0s; }
+  .particle-delay-2 { animation-delay: 1s; }
+  .particle-delay-3 { animation-delay: 2s; }
+  .particle-delay-4 { animation-delay: 0.5s; }
+  .particle-delay-5 { animation-delay: 1.5s; }
+
+  /* Glow sweep on hover */
+  .glow-sweep {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+  }
+
+  .glow-sweep::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.06), transparent);
+    transition: left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glow-sweep:hover::before {
+    left: 150%;
+  }
+
+  /* Icon bounce on hover */
+  .step-icon-hover {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover .step-icon-hover {
+    transform: translateY(-6px) scale(1.15);
+  }
+
+  /* Description highlight on hover */
+  .step-desc {
+    transition: color 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover .step-desc {
+    color: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px);
+  }
+
+  /* Sparkle dot pulse */
+  .sparkle-dot {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* Magnetic lift on hover */
+  .step-card {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 24px 64px -16px rgba(220, 38, 38, 0.25);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-10px); }
+  75% { transform: translateY(-25px) translateX(5px); }
+}
+
+@keyframes floatMedium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(1deg); }
+  66% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes floatFast {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ctaPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes badgePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes lineDraw {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ── How It Works: advanced animations ── */
+
+/* 3D number flip */
+@keyframes numberFlip {
+  0% {
+    transform: perspective(600px) rotateY(-90deg) scale(0.5);
+    opacity: 0;
+  }
+  40% {
+    transform: perspective(600px) rotateY(15deg) scale(1.1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: perspective(600px) rotateY(-5deg) scale(0.98);
+  }
+  100% {
+    transform: perspective(600px) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Outer ring ripple cascade */
+@keyframes ringRipple {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+    border-width: 3px;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* Stagger-in from sides */
+@keyframes slideInLeftSpring {
+  0% {
+    transform: translateX(-80px) translateY(20px);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(8px) translateY(-4px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(-3px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes timelineRise {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes timelineBadge {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 20px 50px rgba(239, 68, 68, 0.28);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 24px 60px rgba(239, 68, 68, 0.34);
+  }
+}
+
+@keyframes timelinePulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes timelineDot {
+  0%, 100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-50%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes timelineTrail {
+  0% {
+    transform: translate(-50%, -20px) scaleY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, 0) scaleY(1);
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, 20px) scaleY(0);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRightSpring {
+  0% {
+    transform: translateX(80px) translateY(20px);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(-8px) translateY(-4px);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateX(3px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Connector draw-in */
+@keyframes connectorDraw {
+  from {
+    stroke-dashoffset: var(--connector-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Particle float */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-15px) translateX(8px) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-8px) translateX(-6px) scale(0.8);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-20px) translateX(4px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Glow sweep */
+@keyframes glowSweep {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Connector animated dash */
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+/* ── Sports Carousel ── */
+
+/* Glowing orb for section */
+@keyframes orbPulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes sportsBookFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes sportsBookFlip {
+  0%, 72% {
+    transform: perspective(2200px) rotateX(2deg) rotateY(0deg);
+    opacity: 1;
+  }
+  78% {
+    transform: perspective(2200px) rotateX(2deg) rotateY(-12deg);
+    opacity: 0.96;
+  }
+  88% {
+    transform: perspective(2200px) rotateX(2deg) rotateY(-96deg);
+    opacity: 0.86;
+  }
+  100% {
+    transform: perspective(2200px) rotateX(2deg) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes sportsBookMaterialize {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(18px);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes sportsBookDotPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(32, 168, 244, 0.2);
+  }
+  50% {
+    transform: scale(1.16);
+    box-shadow: 0 0 0 10px rgba(32, 168, 244, 0);
+  }
+}
+
+@keyframes sportsBookBall {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(12px, -8px, 0);
+  }
+}
+
+@keyframes sportsBookCharacter {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes sportsBookGlow {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.04);
+  }
+}
+
+@keyframes sportsBookOrbFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -16px, 0) scale(1.04);
+  }
+}
+
+/* Card entrance */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Sports Carousel ping ── */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
   }
 }
