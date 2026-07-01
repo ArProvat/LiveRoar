@@ -4,8 +4,9 @@ import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
 from app import app
-from app.database import Base
+from app.database import Base, get_db
 
 
 # ---------------------------------------------------------------------------
@@ -13,15 +14,9 @@ from app.database import Base
 # ---------------------------------------------------------------------------
 
 @pytest.fixture(scope="session")
-def anyio_backend():
-    return "asyncio"
-
-
-@pytest.fixture(scope="session")
-def db_path(tmp_path_factory):
-    """Create a temporary SQLite file for the entire test session."""
-    path = tmp_path_factory.mktemp("test_db") / "test.sqlite"
-    return str(path)
+def db_path():
+    tmpdir = tempfile.mkdtemp(prefix="liveroar_test_")
+    return os.path.join(tmpdir, "test.sqlite")
 
 
 @pytest.fixture(scope="session")
@@ -29,38 +24,52 @@ def test_db_url(db_path):
     return f"sqlite+aiosqlite:///{db_path}"
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def _seed_db(test_db_url):
-    """Create test database tables once per session."""
+@pytest.fixture(scope="session")
+def _engine(test_db_url):
     engine = create_async_engine(test_db_url, echo=False)
-    async with engine.begin() as conn:
+    return engine
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def _seed_db(_engine):
+    async with _engine.begin() as conn:
+        # Drop all tables with raw SQL to ensure indexes are also removed
+        tables = [
+            "users", "channels", "matches", "favorites",
+            "watch_history", "chat_messages", "notifications",
+        ]
+        for t in tables:
+            await conn.execute(text(f"DROP TABLE IF EXISTS {t}"))
         await conn.run_sync(Base.metadata.create_all)
-    yield engine
-    await engine.dispose()
-    # Cleanup
-    if os.path.exists(test_db_url.split("/")[-1]):
-        os.remove(test_db_url.split("/")[-1])
+    yield _engine
+    await _engine.dispose()
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        tmpdir = os.path.dirname(db_path)
+        if os.path.exists(tmpdir):
+            try:
+                os.rmdir(tmpdir)
+            except OSError:
+                pass
 
 
 @pytest.fixture
-async def auth_client(_seed_db, test_db_url):
-    """Client with test DB override for auth endpoints."""
-    # Re-use the same engine from _seed_db by creating a new sessionmaker
-    from app.database import engine as session_engine
-    test_session_maker = async_sessionmaker(session_engine, class_=AsyncSession, expire_on_commit=False)
+def _session_maker(_engine):
+    return async_sessionmaker(_engine, class_=AsyncSession, expire_on_commit=False)
 
+
+@pytest.fixture
+async def auth_client(_seed_db, _session_maker):
     async def override_get_db():
-        async with test_session_maker() as session:
+        async with _session_maker() as session:
             try:
                 yield session
                 await session.commit()
             except Exception:
                 await session.rollback()
                 raise
-            finally:
-                await session.close()
 
-    app.dependency_overrides[None] = override_get_db
+    app.dependency_overrides[get_db] = override_get_db
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -71,7 +80,6 @@ async def auth_client(_seed_db, test_db_url):
 
 @pytest.fixture
 async def registered_user(auth_client):
-    """Register a user and return (email, password, access_token)."""
     register_data = {
         "email": "integration@example.com",
         "password": "integration123",

@@ -1,5 +1,6 @@
 """Integration tests for matches API endpoints."""
 import os
+import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -8,14 +9,10 @@ from app import app
 from app.database import Base, get_db
 
 
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
-def db_path(tmp_path_factory):
-    path = tmp_path_factory.mktemp("test_db") / "matches_test.sqlite"
-    return str(path)
+def db_path():
+    tmpdir = tempfile.mkdtemp(prefix="liveroar_matches_test_")
+    return os.path.join(tmpdir, "matches_test.sqlite")
 
 
 @pytest.fixture(scope="session")
@@ -32,11 +29,18 @@ def _engine(test_db_url):
 @pytest.fixture(scope="session", autouse=True)
 async def _seed_db(_engine):
     async with _engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield _engine
     await _engine.dispose()
     if os.path.exists(db_path):
         os.remove(db_path)
+        tmpdir = os.path.dirname(db_path)
+        if os.path.exists(tmpdir):
+            try:
+                os.rmdir(tmpdir)
+            except OSError:
+                pass
 
 
 @pytest.fixture

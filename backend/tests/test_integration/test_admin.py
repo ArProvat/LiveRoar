@@ -1,21 +1,19 @@
 """Integration tests for admin API endpoints."""
 import os
+import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
 from datetime import datetime
 from app import app
 from app.database import Base, get_db
 
 
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
-def db_path(tmp_path_factory):
-    path = tmp_path_factory.mktemp("test_db") / "admin_test.sqlite"
-    return str(path)
+def db_path():
+    tmpdir = tempfile.mkdtemp(prefix="liveroar_admin_test_")
+    return os.path.join(tmpdir, "admin_test.sqlite")
 
 
 @pytest.fixture(scope="session")
@@ -32,12 +30,23 @@ def _engine(test_db_url):
 @pytest.fixture(scope="session", autouse=True)
 async def _seed_db(_engine):
     async with _engine.begin() as conn:
+        tables = [
+            "users", "channels", "matches", "favorites",
+            "watch_history", "chat_messages", "notifications",
+        ]
+        for t in tables:
+            await conn.execute(text(f"DROP TABLE IF EXISTS {t}"))
         await conn.run_sync(Base.metadata.create_all)
     yield _engine
     await _engine.dispose()
-    db_path = _engine.url.database
-    if db_path and os.path.exists(db_path):
+    if os.path.exists(db_path):
         os.remove(db_path)
+        tmpdir = os.path.dirname(db_path)
+        if os.path.exists(tmpdir):
+            try:
+                os.rmdir(tmpdir)
+            except OSError:
+                pass
 
 
 @pytest.fixture
@@ -67,7 +76,6 @@ async def client(_seed_db, _session_maker):
 
 @pytest.fixture
 async def seeded_admin_client(_seed_db, _session_maker):
-    """Admin client with data seeded."""
     from app.core.models import User, Match
     from app.core.security import hash_password, create_access_token
 

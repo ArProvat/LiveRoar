@@ -1,5 +1,6 @@
 """Integration tests for channels API endpoints."""
 import os
+import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -7,14 +8,10 @@ from app import app
 from app.database import Base, get_db
 
 
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
-def db_path(tmp_path_factory):
-    path = tmp_path_factory.mktemp("test_db") / "channels_test.sqlite"
-    return str(path)
+def db_path():
+    tmpdir = tempfile.mkdtemp(prefix="liveroar_channels_test_")
+    return os.path.join(tmpdir, "channels_test.sqlite")
 
 
 @pytest.fixture(scope="session")
@@ -31,11 +28,18 @@ def _engine(test_db_url):
 @pytest.fixture(scope="session", autouse=True)
 async def _seed_db(_engine):
     async with _engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield _engine
     await _engine.dispose()
-    if os.path.exists(test_db_url.split("/")[-1]):
-        os.remove(test_db_url.split("/")[-1])
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        tmpdir = os.path.dirname(db_path)
+        if os.path.exists(tmpdir):
+            try:
+                os.rmdir(tmpdir)
+            except OSError:
+                pass
 
 
 @pytest.fixture
@@ -65,7 +69,6 @@ async def client(_seed_db, _session_maker):
 
 @pytest.fixture
 async def seeded_client(_seed_db, _session_maker):
-    """Client with DB seeded with channels."""
     async with _session_maker() as session:
         from app.core.models import Channel
         for i in range(5):
