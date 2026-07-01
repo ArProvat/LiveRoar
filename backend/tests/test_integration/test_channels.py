@@ -16,7 +16,7 @@ def db_path():
 
 
 @pytest.fixture(scope="session")
-def _engine(db_path):
+async def _engine(db_path):
     db_url = f"sqlite+aiosqlite:///{db_path}"
     engine = create_async_engine(db_url, echo=False)
     yield engine
@@ -24,7 +24,7 @@ def _engine(db_path):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def _setup_db(_engine, db_path):
+async def _setup_db(_engine, db_path):
     conn = sqlite3.connect(db_path)
     conn.execute("DROP TABLE IF EXISTS notifications")
     conn.execute("DROP TABLE IF EXISTS chat_messages")
@@ -37,13 +37,10 @@ def _setup_db(_engine, db_path):
     conn.commit()
     conn.close()
 
-    import asyncio
-    async def create():
-        async with _engine.connect() as conn:
-            from app.core.models import User, Channel, Match, Favorite, WatchHistory, ChatMessage, Notification, StreamConfig  # noqa: F401
-            await conn.run_sync(Base.metadata.create_all)
-            await conn.commit()
-    asyncio.get_event_loop().run_until_complete(create())
+    async with _engine.connect() as conn:
+        from app.core.models import User, Channel, Match, Favorite, WatchHistory, ChatMessage, Notification, StreamConfig  # noqa: F401
+        await conn.run_sync(Base.metadata.create_all)
+        await conn.commit()
 
     yield _engine
 
@@ -79,11 +76,12 @@ async def seeded_client(_setup_db, _session_maker):
         from app.core.models import Channel
         for i in range(5):
             channel = Channel(
+                id=f"channel-{i}",
                 name=f"Channel {i}",
                 slug=f"channel-{i}",
                 description=f"Description for channel {i}",
                 category="FOOTBALL" if i % 2 == 0 else "CRICKET",
-                is_live=i == 0,
+                is_live=(i == 0),
             )
             session.add(channel)
         await session.commit()
@@ -104,3 +102,78 @@ async def seeded_client(_setup_db, _session_maker):
         yield ac
 
     app.dependency_overrides.clear()
+
+
+# ---------------------------------------------------------------------------
+# List Channels
+# ---------------------------------------------------------------------------
+
+class TestListChannels:
+    @pytest.mark.asyncio
+    async def test_list_channels_default(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "data" in data
+        assert "total" in data
+        assert "page" in data
+        assert "per_page" in data
+        assert data["total"] == 5
+
+    @pytest.mark.asyncio
+    async def test_list_channels_filter_category(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels?category=FOOTBALL")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 3  # channels 0, 2, 4 are FOOTBALL
+        for c in data["data"]:
+            assert c["category"] == "FOOTBALL"
+
+    @pytest.mark.asyncio
+    async def test_list_channels_pagination(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels?page=1&per_page=2")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["data"]) == 2
+        assert data["page"] == 1
+        assert data["per_page"] == 2
+
+    @pytest.mark.asyncio
+    async def test_list_channels_empty_result(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels?category=BASKETBALL")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 0
+        assert len(data["data"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# Get Channel
+# ---------------------------------------------------------------------------
+
+class TestGetChannel:
+    @pytest.mark.asyncio
+    async def test_get_channel_by_slug(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels/channel-0")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["slug"] == "channel-0"
+        assert data["name"] == "Channel 0"
+        assert data["category"] == "FOOTBALL"
+
+    @pytest.mark.asyncio
+    async def test_get_channel_not_found(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels/nonexistent-slug")
+        assert resp.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_get_channel_has_required_fields(self, seeded_client):
+        resp = await seeded_client.get("/api/v1/channels/channel-1")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "id" in data
+        assert "name" in data
+        assert "slug" in data
+        assert "category" in data
+        assert "is_live" in data
+        assert "created_at" in data
