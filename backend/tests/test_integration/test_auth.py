@@ -1,4 +1,6 @@
 """Integration tests for auth API endpoints."""
+import os
+import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -10,30 +12,42 @@ from app.database import Base
 # Fixtures
 # ---------------------------------------------------------------------------
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
-
-
 @pytest.fixture(scope="session")
 def anyio_backend():
     return "asyncio"
 
 
+@pytest.fixture(scope="session")
+def db_path(tmp_path_factory):
+    """Create a temporary SQLite file for the entire test session."""
+    path = tmp_path_factory.mktemp("test_db") / "test.sqlite"
+    return str(path)
+
+
+@pytest.fixture(scope="session")
+def test_db_url(db_path):
+    return f"sqlite+aiosqlite:///{db_path}"
+
+
 @pytest.fixture(scope="session", autouse=True)
-async def _seed_db():
+async def _seed_db(test_db_url):
     """Create test database tables once per session."""
-    engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+    engine = create_async_engine(test_db_url, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield engine
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
+    # Cleanup
+    if os.path.exists(test_db_url.split("/")[-1]):
+        os.remove(test_db_url.split("/")[-1])
 
 
 @pytest.fixture
-async def auth_client(_seed_db):
+async def auth_client(_seed_db, test_db_url):
     """Client with test DB override for auth endpoints."""
-    test_session_maker = async_sessionmaker(_seed_db, class_=AsyncSession, expire_on_commit=False)
+    # Re-use the same engine from _seed_db by creating a new sessionmaker
+    from app.database import engine as session_engine
+    test_session_maker = async_sessionmaker(session_engine, class_=AsyncSession, expire_on_commit=False)
 
     async def override_get_db():
         async with test_session_maker() as session:
