@@ -55,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#040816] text-white antialiased">
+      <body className="antialiased">
         <Navbar />
         <div className="pt-16">{children}</div>
       </body>

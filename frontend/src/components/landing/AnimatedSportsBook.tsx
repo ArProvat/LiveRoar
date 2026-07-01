@@ -71,17 +71,17 @@ function CTAButtons({ primaryHref, secondaryHref }: CTAButtonsProps) {
     <div className="flex flex-col gap-4 sm:flex-row">
       <a
         href={primaryHref}
-        className="group inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#20A8F4,#0B5FFF)] px-7 text-sm font-semibold text-white shadow-[0_20px_40px_rgba(11,95,255,0.24)] transition-transform duration-300 hover:-translate-y-1"
+        className="group inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#dc2626,#f97316)] px-7 text-sm font-semibold text-white shadow-[0_20px_45px_rgba(220,38,38,0.26)] transition-transform duration-300 hover:-translate-y-1"
       >
-        Explore Live Coverage
+        Enter the Broadcast
         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </a>
       <a
         href={secondaryHref}
-        className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-7 text-sm font-semibold text-slate-700 backdrop-blur-xl transition-colors duration-300 hover:border-slate-400 hover:bg-white/80"
+        className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 text-sm font-semibold text-white/85 backdrop-blur-xl transition-colors duration-300 hover:border-white/20 hover:bg-white/10"
       >
         <Play className="h-4 w-4 fill-current" />
-        Watch Demo
+        Explore Channels
       </a>
     </div>
   );
@@ -348,18 +348,19 @@ export function AnimatedSportsBook() {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/75 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-500">
                     <Sparkles className="h-3.5 w-3.5 text-sky-500" />
-                    Betopia Sports AI
+                    LiveRoar Broadcast
                   </div>
                   <h2 className="mt-5 max-w-[12rem] text-2xl font-bold tracking-[-0.05em] text-slate-900 sm:text-[2rem]">
-                    Sports coverage that reads like a live report.
+                    Sports coverage that feels like a live control room.
                   </h2>
                   <p className="mt-4 max-w-[15rem] text-sm leading-6 text-slate-500">
-                    Automatically rotating match intelligence, regional coverage, and sport-specific insight cards.
+                    Automatically rotating match intelligence, regional coverage, and sport-specific insight cards in a
+                    polished broadcast deck.
                   </p>
                 </div>
                 <div className="grid gap-3">
                   <div className="rounded-2xl border border-white/80 bg-white/75 p-3 shadow-[0_16px_34px_rgba(15,23,42,0.06)]">
-                    <p className="text-[11px] uppercase tracking-[0.24em] text-slate-400">Coverage</p>
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-slate-400">Live coverage</p>
                     <p className="mt-1 text-lg font-semibold text-slate-900">120+ events monitored</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -396,11 +397,11 @@ export function AnimatedSportsBook() {
           </div>
           <div className="absolute right-[8%] bottom-[7%] inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
             <TrendingUp className="h-3.5 w-3.5 text-sky-500" />
-            Auto flipping every 5s
+            Studio deck refresh every 5s
           </div>
           <div className="absolute left-[10%] bottom-[6%] inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-4 py-2 text-xs uppercase tracking-[0.22em] text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
             <Waves className="h-3.5 w-3.5 text-violet-500" />
-            Smooth report loop
+            Seamless broadcast loop
           </div>
           <div className="absolute left-[18%] top-[16%] rounded-full border border-white/70 bg-white/75 px-4 py-2 text-[11px] uppercase tracking-[0.24em] text-slate-500 shadow-[0_14px_30px_rgba(15,23,42,0.06)]">
             <div className="flex items-center gap-2">
@@ -416,32 +417,39 @@ export function AnimatedSportsBook() {
 
 export function HeroSection() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#F8FBFF] pb-20 pt-12 sm:pb-24 sm:pt-16 lg:min-h-screen lg:pb-0">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,245,255,0.95),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(185,167,255,0.18),transparent_28%),linear-gradient(135deg,#F8FBFF_0%,#F5F8FF_48%,#EEF6FF_100%)]" />
-      <div className="absolute right-[-12%] top-[-4%] h-[52rem] w-[52rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(185,167,255,0.22),rgba(185,167,255,0))] blur-3xl" />
-      <div className="absolute right-[-8%] top-[18%] h-[34rem] w-[34rem] rounded-[44%] border border-white/50 bg-white/35 blur-[2px]" />
-      <div className="absolute right-[6%] top-[12%] h-[28rem] w-[28rem] rounded-[36%] bg-[linear-gradient(160deg,rgba(255,255,255,0.72),rgba(234,245,255,0.24))] shadow-[0_20px_100px_rgba(32,168,244,0.08)]" />
+    <section className="relative isolate overflow-hidden bg-[#040816] pb-20 pt-12 sm:pb-24 sm:pt-16 lg:min-h-screen lg:pb-0">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.22),transparent_30%),radial-gradient(circle_at_top_right,rgba(220,38,38,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(185,167,255,0.12),transparent_24%),linear-gradient(135deg,#040816_0%,#08111f_46%,#050b18_100%)]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      <div className="absolute right-[-12%] top-[-4%] h-[52rem] w-[52rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.18),rgba(59,130,246,0))] blur-3xl" />
+      <div className="absolute right-[-8%] top-[18%] h-[34rem] w-[34rem] rounded-[44%] border border-white/10 bg-white/5 blur-[2px]" />
+      <div className="absolute right-[6%] top-[12%] h-[28rem] w-[28rem] rounded-[36%] bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] shadow-[0_20px_100px_rgba(0,0,0,0.2)]" />
       <FloatingOrb className="sports-book-orb sports-book-orb-blue absolute left-[8%] top-[22%] h-28 w-28 rounded-full blur-3xl" />
       <FloatingOrb className="sports-book-orb sports-book-orb-pink absolute left-[34%] top-[14%] h-16 w-16 rounded-full blur-2xl" />
       <FloatingOrb className="sports-book-orb sports-book-orb-purple absolute right-[18%] bottom-[18%] h-24 w-24 rounded-full blur-3xl" />
 
       <div className="relative mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-10 lg:px-8 lg:py-12">
         <div className="w-full lg:w-[45%]">
-          <div className="inline-flex items-center gap-3 rounded-full border border-white/70 bg-white/75 px-4 py-2 text-sm font-medium text-slate-600 shadow-[0_18px_45px_rgba(17,24,39,0.06)] backdrop-blur-xl">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#20A8F4,#0B5FFF)] text-white shadow-[0_12px_26px_rgba(11,95,255,0.22)]">
+          <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-medium text-slate-200 shadow-[0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#dc2626,#f97316)] text-white shadow-[0_12px_26px_rgba(220,38,38,0.22)]">
               <Sparkles className="h-4 w-4" />
             </div>
-            Betopia Sports AI
+            LiveRoar Broadcast
           </div>
 
           <div className="mt-8 max-w-2xl sports-hero-copy">
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-sky-600">Premium Sports Intelligence</p>
-            <h1 className="mt-5 text-[34px] font-black leading-[1.02] tracking-[-0.06em] text-slate-900 sm:text-[44px] lg:text-[64px]">
-              Experience the Future of Sports Coverage
+            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-red-400">Premium Sports Intelligence</p>
+            <h1 className="mt-5 text-[34px] font-black leading-[1.02] tracking-[-0.06em] text-white sm:text-[44px] lg:text-[64px]">
+              Experience the game like a prime-time broadcast.
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate-500 sm:text-lg">
-              Follow football, cricket, MMA, and global sports action with intelligent insights, animated match previews, live coverage, and AI-powered analysis.
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
+              Follow football, cricket, MMA, and global sports action with intelligent insights, animated match previews,
+              live coverage, and AI-powered analysis presented with studio-grade polish.
             </p>
+            <div className="mt-6 flex flex-wrap gap-3 text-[11px] uppercase tracking-[0.22em] text-slate-300">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2">Live feed</span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2">HD coverage</span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2">Match desk</span>
+            </div>
           </div>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -456,7 +464,16 @@ export function HeroSection() {
         </div>
 
         <div className="w-full lg:w-[55%]">
-          <AnimatedSportsBook />
+          <div className="mx-auto max-w-[760px] rounded-[40px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))] p-2 shadow-[0_40px_120px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+            <div className="mb-3 flex items-center justify-between rounded-full border border-white/10 bg-black/20 px-4 py-2 text-[11px] uppercase tracking-[0.24em] text-slate-300 backdrop-blur-xl">
+              <span className="inline-flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_0_8px_rgba(220,38,38,0.14)]" />
+                On Air
+              </span>
+              <span className="text-slate-400">Broadcast feed</span>
+            </div>
+            <AnimatedSportsBook />
+          </div>
         </div>
       </div>
     </section>
