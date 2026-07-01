@@ -1,10 +1,10 @@
 """Integration tests for channels API endpoints."""
 import os
 import tempfile
+import sqlite3
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy import text
 from app import app
 from app.database import get_db, Base
 
@@ -15,24 +15,36 @@ def db_path():
     return os.path.join(tmpdir, "channels_test.sqlite")
 
 
-@pytest.fixture
-async def _engine(db_path):
+@pytest.fixture(scope="session")
+def _engine(db_path):
     db_url = f"sqlite+aiosqlite:///{db_path}"
     engine = create_async_engine(db_url, echo=False)
     yield engine
     await engine.dispose()
 
 
-@pytest.fixture
-async def _setup_db(_engine):
-    async with _engine.begin() as conn:
-        tables = [
-            "notifications", "chat_messages", "watch_history",
-            "favorites", "matches", "channels", "users",
-        ]
-        for t in tables:
-            await conn.execute(text(f"DROP TABLE IF EXISTS {t}"))
-        await conn.run_sync(Base.metadata.create_all)
+@pytest.fixture(scope="session", autouse=True)
+def _setup_db(_engine, db_path):
+    conn = sqlite3.connect(db_path)
+    conn.execute("DROP TABLE IF EXISTS notifications")
+    conn.execute("DROP TABLE IF EXISTS chat_messages")
+    conn.execute("DROP TABLE IF EXISTS watch_history")
+    conn.execute("DROP TABLE IF EXISTS favorites")
+    conn.execute("DROP TABLE IF EXISTS matches")
+    conn.execute("DROP TABLE IF EXISTS channels")
+    conn.execute("DROP TABLE IF EXISTS users")
+    conn.execute("DROP TABLE IF EXISTS stream_configs")
+    conn.commit()
+    conn.close()
+
+    import asyncio
+    async def create():
+        async with _engine.connect() as conn:
+            from app.core.models import User, Channel, Match, Favorite, WatchHistory, ChatMessage, Notification, StreamConfig  # noqa: F401
+            await conn.run_sync(Base.metadata.create_all)
+            await conn.commit()
+    asyncio.get_event_loop().run_until_complete(create())
+
     yield _engine
 
 
