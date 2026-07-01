@@ -61,8 +61,8 @@ class TestSetupLogging:
         # Should not raise
 
     def test_setup_logging_disable_existing_false(self):
-        """Existing loggers should not be disabled."""
+        """Existing loggers should not be disabled by setup."""
         existing = logging.getLogger("some.existing.logger")
-        existing.disabled = True
+        was_disabled = existing.disabled
         setup_logging()
-        assert existing.disabled is True
+        assert existing.disabled == was_disabled

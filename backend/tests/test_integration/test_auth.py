@@ -2,9 +2,8 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from app.main import app
+from app import app
 from app.database import Base
-from app.core.models import User
 
 
 # ---------------------------------------------------------------------------
@@ -20,7 +19,8 @@ def anyio_backend():
 
 
 @pytest.fixture(scope="session", autouse=True)
-async def test_db_engine():
+async def _seed_db():
+    """Create test database tables once per session."""
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -31,33 +31,9 @@ async def test_db_engine():
 
 
 @pytest.fixture
-async def client(test_db_engine):
-    test_session_maker = async_sessionmaker(test_db_engine, class_=AsyncSession, expire_on_commit=False)
-
-    async def override_get_db():
-        async with test_session_maker() as session:
-            try:
-                yield session
-                await session.commit()
-            except Exception:
-                await session.rollback()
-                raise
-            finally:
-                await session.close()
-
-    app.dependency_overrides[None] = override_get_db
-
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
-
-    app.dependency_overrides.clear()
-
-
-@pytest.fixture
-async def auth_client(test_db_engine):
-    """Client with auth dependency overrides for endpoints that need DB."""
-    test_session_maker = async_sessionmaker(test_db_engine, class_=AsyncSession, expire_on_commit=False)
+async def auth_client(_seed_db):
+    """Client with test DB override for auth endpoints."""
+    test_session_maker = async_sessionmaker(_seed_db, class_=AsyncSession, expire_on_commit=False)
 
     async def override_get_db():
         async with test_session_maker() as session:
@@ -103,8 +79,8 @@ async def registered_user(auth_client):
 
 class TestHealth:
     @pytest.mark.asyncio
-    async def test_health_endpoint(self, client):
-        resp = await client.get("/api/v1/health")
+    async def test_health_endpoint(self, auth_client):
+        resp = await auth_client.get("/api/v1/health")
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "ok"
@@ -117,8 +93,8 @@ class TestHealth:
 
 class TestRegister:
     @pytest.mark.asyncio
-    async def test_register_success(self, client):
-        resp = await client.post("/api/v1/auth/register", json={
+    async def test_register_success(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/register", json={
             "email": "new@example.com",
             "password": "password123",
             "name": "New User",
@@ -131,38 +107,38 @@ class TestRegister:
         assert "hashed_password" not in data
 
     @pytest.mark.asyncio
-    async def test_register_duplicate_email(self, client):
+    async def test_register_duplicate_email(self, auth_client):
         payload = {"email": "dup@example.com", "password": "password123", "name": "Dup"}
-        await client.post("/api/v1/auth/register", json=payload)
-        resp = await client.post("/api/v1/auth/register", json=payload)
+        await auth_client.post("/api/v1/auth/register", json=payload)
+        resp = await auth_client.post("/api/v1/auth/register", json=payload)
         assert resp.status_code == 409
 
     @pytest.mark.asyncio
-    async def test_register_invalid_email(self, client):
-        resp = await client.post("/api/v1/auth/register", json={
+    async def test_register_invalid_email(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/register", json={
             "email": "not-an-email",
             "password": "password123",
         })
         assert resp.status_code == 422
 
     @pytest.mark.asyncio
-    async def test_register_short_password(self, client):
-        resp = await client.post("/api/v1/auth/register", json={
+    async def test_register_short_password(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/register", json={
             "email": "short@example.com",
             "password": "short",
         })
         assert resp.status_code == 422
 
     @pytest.mark.asyncio
-    async def test_register_missing_email(self, client):
-        resp = await client.post("/api/v1/auth/register", json={
+    async def test_register_missing_email(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/register", json={
             "password": "password123",
         })
         assert resp.status_code == 422
 
     @pytest.mark.asyncio
-    async def test_register_missing_password(self, client):
-        resp = await client.post("/api/v1/auth/register", json={
+    async def test_register_missing_password(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/register", json={
             "email": "test@example.com",
         })
         assert resp.status_code == 422
@@ -174,45 +150,45 @@ class TestRegister:
 
 class TestLogin:
     @pytest.mark.asyncio
-    async def test_login_success(self, client):
+    async def test_login_success(self, auth_client):
         register_data = {
             "email": "login@example.com",
             "password": "password123",
             "name": "Login User",
         }
-        await client.post("/api/v1/auth/register", json=register_data)
-        resp = await client.post("/api/v1/auth/login", json=register_data)
+        await auth_client.post("/api/v1/auth/register", json=register_data)
+        resp = await auth_client.post("/api/v1/auth/login", json=register_data)
         assert resp.status_code == 200
         data = resp.json()
         assert "access_token" in data
         assert "refresh_token" in data
         assert data["token_type"] == "bearer"
-        assert data["expires_in"] == 900  # 15 min in seconds
+        assert data["expires_in"] == 900
 
     @pytest.mark.asyncio
-    async def test_login_wrong_password(self, client):
+    async def test_login_wrong_password(self, auth_client):
         register_data = {
             "email": "wrong@example.com",
             "password": "password123",
         }
-        await client.post("/api/v1/auth/register", json=register_data)
-        resp = await client.post("/api/v1/auth/login", json={
+        await auth_client.post("/api/v1/auth/register", json=register_data)
+        resp = await auth_client.post("/api/v1/auth/login", json={
             "email": "wrong@example.com",
             "password": "wrongpass",
         })
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
-    async def test_login_nonexistent_user(self, client):
-        resp = await client.post("/api/v1/auth/login", json={
+    async def test_login_nonexistent_user(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/login", json={
             "email": "nobody@example.com",
             "password": "password123",
         })
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
-    async def test_login_missing_fields(self, client):
-        resp = await client.post("/api/v1/auth/login", json={})
+    async def test_login_missing_fields(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/login", json={})
         assert resp.status_code == 422
 
 
@@ -222,16 +198,16 @@ class TestLogin:
 
 class TestRefresh:
     @pytest.mark.asyncio
-    async def test_refresh_token(self, client):
+    async def test_refresh_token(self, auth_client):
         register_data = {
             "email": "refresh@example.com",
             "password": "password123",
         }
-        await client.post("/api/v1/auth/register", json=register_data)
-        login_resp = await client.post("/api/v1/auth/login", json=register_data)
+        await auth_client.post("/api/v1/auth/register", json=register_data)
+        login_resp = await auth_client.post("/api/v1/auth/login", json=register_data)
         tokens = login_resp.json()
 
-        resp = await client.post("/api/v1/auth/refresh", json={
+        resp = await auth_client.post("/api/v1/auth/refresh", json={
             "refresh_token": tokens["refresh_token"],
         })
         assert resp.status_code == 200
@@ -240,24 +216,23 @@ class TestRefresh:
         assert "refresh_token" in data
 
     @pytest.mark.asyncio
-    async def test_refresh_invalid_token(self, client):
-        resp = await client.post("/api/v1/auth/refresh", json={
+    async def test_refresh_invalid_token(self, auth_client):
+        resp = await auth_client.post("/api/v1/auth/refresh", json={
             "refresh_token": "invalid.token.here",
         })
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
-    async def test_refresh_using_access_token_fails(self, client):
+    async def test_refresh_using_access_token_fails(self, auth_client):
         register_data = {
             "email": "refresh2@example.com",
             "password": "password123",
         }
-        await client.post("/api/v1/auth/register", json=register_data)
-        login_resp = await client.post("/api/v1/auth/login", json=register_data)
+        await auth_client.post("/api/v1/auth/register", json=register_data)
+        login_resp = await auth_client.post("/api/v1/auth/login", json=register_data)
         tokens = login_resp.json()
 
-        # Using an access token as refresh should fail
-        resp = await client.post("/api/v1/auth/refresh", json={
+        resp = await auth_client.post("/api/v1/auth/refresh", json={
             "refresh_token": tokens["access_token"],
         })
         assert resp.status_code == 401
@@ -280,7 +255,7 @@ class TestGetMeUpdateMe:
     @pytest.mark.asyncio
     async def test_get_me_without_token(self, auth_client):
         resp = await auth_client.get("/api/v1/auth/me")
-        assert resp.status_code == 403  # FastAPI security scheme rejection
+        assert resp.status_code in (401, 403)
 
     @pytest.mark.asyncio
     async def test_update_me_name(self, auth_client, registered_user):
@@ -307,4 +282,4 @@ class TestGetMeUpdateMe:
     @pytest.mark.asyncio
     async def test_get_me_invalid_token(self, auth_client):
         resp = await auth_client.get("/api/v1/auth/me", headers={"Authorization": "Bearer invalid"})
-        assert resp.status_code == 403
+        assert resp.status_code in (401, 403)

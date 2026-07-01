@@ -7,13 +7,6 @@ _BACKEND_ROOT = os.path.join(os.path.dirname(__file__))
 if _BACKEND_ROOT not in sys.path:
     sys.path.insert(0, _BACKEND_ROOT)
 
-# Set a minimal .env for tests so Settings() doesn't crash
-_ENV_PATH = os.path.join(os.path.dirname(_BACKEND_ROOT), ".env")
-if not os.path.exists(_ENV_PATH):
-    with open(_ENV_PATH, "w") as f:
-        f.write("""DATABASE_URL=postgresql+asyncpg://test:test@localhost/test
-JWT_SECRET_KEY=test-secret-key-for-unit-tests-only
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=15
-REFRESH_TOKEN_EXPIRE_DAYS=7
-""")
+# Override DATABASE_URL so the real .env doesn't pull in asyncpg/PostgreSQL
+# for tests.  aiosqlite is always available and needs no compilation.
+os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")

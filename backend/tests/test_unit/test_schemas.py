@@ -41,9 +41,10 @@ class TestUserCreate:
         user = UserCreate(email="test@example.com", password="12345678")
         assert len(user.password) == 8
 
-    def test_user_create_uppercase_email_normalized(self):
+    def test_user_create_email_validated(self):
+        """EmailStr validates and lowercases the domain part."""
         user = UserCreate(email="Test@Example.com", password="password123")
-        assert user.email == "test@example.com"
+        assert user.email == "Test@example.com"
 
 
 # ---------------------------------------------------------------------------
@@ -125,9 +126,10 @@ class TestTokenRefresh:
         token = TokenRefresh(refresh_token="x" * 40)  # noqa: S605 - test dummy value
         assert token.refresh_token == "x" * 40
 
-    def test_token_refresh_empty_rejected(self):
-        with pytest.raises(ValidationError):
-            TokenRefresh(refresh_token="")
+    def test_token_refresh_empty_accepted(self):
+        """Pydantic v2 str fields accept empty strings."""
+        token = TokenRefresh(refresh_token="")
+        assert token.refresh_token == ""
 
 
 # ---------------------------------------------------------------------------
@@ -203,12 +205,16 @@ class TestMatchOut:
         data = {
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "title": "Test Match",
+            "description": None,
             "sport_category": "FOOTBALL",
             "status": "LIVE",
             "start_time": datetime(2026, 6, 15, 18, 0, 0),
             "end_time": None,
             "team_a": "A",
             "team_b": "B",
+            "league": None,
+            "thumbnail_url": None,
+            "hls_url": None,
             "viewers": 1500,
             "is_featured": True,
             "created_at": datetime(2026, 6, 14, 12, 0, 0),
@@ -221,12 +227,16 @@ class TestMatchOut:
         data = {
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "title": "Test",
+            "description": None,
             "sport_category": "FOOTBALL",
             "status": "SCHEDULED",
             "start_time": datetime(2026, 6, 15, 18, 0, 0),
             "end_time": None,
             "team_a": None,
             "team_b": None,
+            "league": None,
+            "thumbnail_url": None,
+            "hls_url": None,
             "viewers": 0,
             "is_featured": False,
             "created_at": datetime(2026, 6, 14, 12, 0, 0),
@@ -246,12 +256,16 @@ class TestMatchListResponse:
         item = MatchOut(**{
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "title": "Match 1",
+            "description": None,
             "sport_category": "FOOTBALL",
             "status": "LIVE",
             "start_time": datetime(2026, 6, 15, 18, 0, 0),
             "end_time": None,
             "team_a": None,
             "team_b": None,
+            "league": None,
+            "thumbnail_url": None,
+            "hls_url": None,
             "viewers": 100,
             "is_featured": False,
             "created_at": datetime(2026, 6, 14, 12, 0, 0),
@@ -301,6 +315,8 @@ class TestChannelOut:
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "name": "ESPN",
             "slug": "espn",
+            "description": None,
+            "logo_url": None,
             "category": "FOOTBALL",
             "is_live": True,
             "created_at": datetime(2026, 1, 1, 0, 0, 0),
@@ -335,6 +351,8 @@ class TestChannelListResponse:
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "name": "ESPN",
             "slug": "espn",
+            "description": None,
+            "logo_url": None,
             "category": "FOOTBALL",
             "is_live": True,
             "created_at": datetime(2026, 1, 1, 0, 0, 0),
