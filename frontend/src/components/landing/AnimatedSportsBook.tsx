@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowUpRight,
   BarChart3,
@@ -230,21 +230,21 @@ function CricketPage() {
           <div className="relative h-32 w-24">
             <div className="absolute left-8 top-0 h-10 w-8 rounded-full bg-[#FFD7BF]" />
             <div className="absolute left-7 top-9 h-14 w-10 rounded-[16px] bg-[linear-gradient(180deg,#20A8F4,#0B5FFF)]" />
-            <div className="absolute left-2 top-13 h-8 w-5 rounded-full bg-[#20A8F4] -rotate-[20deg]" />
+            <div className="absolute left-2 top-[3.25rem] h-8 w-5 rounded-full bg-[#20A8F4] -rotate-[20deg]" />
             <div className="absolute right-1 top-16 h-8 w-5 rounded-full bg-[#0B5FFF] rotate-[35deg]" />
             <div className="absolute left-8 bottom-0 h-14 w-4 rounded-full bg-slate-900 rotate-[6deg]" />
-            <div className="absolute left-13 bottom-0 h-13 w-4 rounded-full bg-white -rotate-[14deg]" />
+            <div className="absolute left-[3.25rem] bottom-0 h-[3.25rem] w-4 rounded-full bg-white -rotate-[14deg]" />
             <div className="absolute right-2 top-14 h-20 w-2 origin-bottom rounded-full bg-[#C97B2E] rotate-[28deg]" />
           </div>
         </div>
         <div className="absolute right-[18%] bottom-[21%] sports-book-float-short">
-          <div className="relative h-30 w-20">
+          <div className="relative h-[7.5rem] w-20">
             <div className="absolute left-6 top-0 h-10 w-8 rounded-full bg-[#FFE2D4]" />
             <div className="absolute left-5 top-9 h-14 w-10 rounded-[16px] bg-[linear-gradient(180deg,#F6A6D7,#B9A7FF)]" />
             <div className="absolute left-1 top-14 h-8 w-5 rounded-full bg-[#F6A6D7] rotate-[10deg]" />
             <div className="absolute right-0 top-11 h-8 w-5 rounded-full bg-[#B9A7FF] -rotate-[32deg]" />
             <div className="absolute left-5 bottom-0 h-14 w-4 rounded-full bg-slate-900 rotate-[6deg]" />
-            <div className="absolute left-11 bottom-0 h-13 w-4 rounded-full bg-[#F6A6D7] -rotate-[10deg]" />
+            <div className="absolute left-11 bottom-0 h-[3.25rem] w-4 rounded-full bg-[#F6A6D7] -rotate-[10deg]" />
           </div>
         </div>
         <div className="absolute left-[43%] top-[34%] h-4 w-4 rounded-full bg-[linear-gradient(135deg,#F97316,#DC2626)] shadow-[0_8px_18px_rgba(220,38,38,0.2)] sports-book-ball" />
@@ -306,9 +306,12 @@ function MMAPage() {
 
 export function AnimatedSportsBook() {
   const [activePage, setActivePage] = useState<SportsBookPage>(SPORTS_BOOK_PAGES[0]);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
+      if (isTransitioning) return;
+      setIsTransitioning(true);
       setActivePage((currentPage) => {
         const currentIndex = SPORTS_BOOK_PAGES.indexOf(currentPage);
         return SPORTS_BOOK_PAGES[(currentIndex + 1) % SPORTS_BOOK_PAGES.length];
@@ -316,6 +319,10 @@ export function AnimatedSportsBook() {
     }, 5000);
 
     return () => window.clearInterval(interval);
+  }, [isTransitioning]);
+
+  const handleTransitionEnd = useCallback(() => {
+    setIsTransitioning(false);
   }, []);
 
   const pages = useMemo(
@@ -350,12 +357,8 @@ export function AnimatedSportsBook() {
                     <Sparkles className="h-3.5 w-3.5 text-sky-500" />
                     LiveRoar Broadcast
                   </div>
-                  <h2 className="mt-5 max-w-[12rem] text-2xl font-bold tracking-[-0.05em] text-slate-900 sm:text-[2rem]">
-                    Sports coverage that feels like a live control room.
-                  </h2>
                   <p className="mt-4 max-w-[15rem] text-sm leading-6 text-slate-500">
-                    Automatically rotating match intelligence, regional coverage, and sport-specific insight cards in a
-                    polished broadcast deck.
+                    Rotating sport-specific insight cards in a polished broadcast deck.
                   </p>
                 </div>
                 <div className="grid gap-3">
@@ -379,7 +382,11 @@ export function AnimatedSportsBook() {
               </div>
             </div>
             <div className="absolute right-0 top-0 bottom-0 w-[48.7%]">
-              <div key={activePage} className="sports-book-page-content relative h-full w-full">
+              <div
+                key={activePage}
+                className="sports-book-page-content relative h-full w-full"
+                onTransitionEnd={handleTransitionEnd}
+              >
                 {pages[activePage]}
               </div>
             </div>

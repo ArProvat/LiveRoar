@@ -163,8 +163,9 @@ export default function SportsCarousel() {
   }, [isPlaying, animate]);
 
   const handlePlayPause = () => {
-    isPausedRef.current = !isPlaying;
-    setIsPlaying(!isPlaying);
+    const newState = !isPlaying;
+    isPausedRef.current = false;
+    setIsPlaying(newState);
   };
 
   const handleHoverStart = () => {
@@ -199,87 +200,89 @@ export default function SportsCarousel() {
 
   return (
     <section className="relative py-16 sm:py-24 overflow-hidden bg-[#050b18]">
-      {/* Background glow effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.03] to-transparent pointer-events-none" />
-
-      {/* Bolt-style Multi-layer Glowing Orb */}
-      <div className="absolute inset-0 pointer-events-none flex flex-col items-center" style={{ zIndex: 0 }}>
-        {/* Thin vertical line */}
-        <div className="w-px h-[80px] bg-gradient-to-b from-transparent via-slate-400/20 to-red-400/30 mt-6" />
-
-        {/* Glowing orb */}
-        <div className="relative -mt-px mt-2">
-          {/* Layer 1 — Outer glow: widest, most transparent ring */}
-          <div className="w-[350px] h-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/8 blur-[40px] absolute left-1/2 top-1/2" />
-
-          {/* Layer 2 — Mid glow: medium ring, more opaque */}
-          <div className="w-[200px] h-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/15 blur-[25px] absolute left-1/2 top-1/2" />
-
-          {/* Layer 3 — Inner glow: tight gradient sphere */}
-          <div className="w-[55px] h-[55px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-red-400 via-red-600 to-red-800 blur-[3px] absolute left-1/2 top-1/2 shadow-[0_0_20px_5px_rgba(239,68,68,0.4),inset_0_-5px_10px_rgba(0,0,0,0.2),inset_0_5px_8px_rgba(255,255,255,0.12)]" />
-
-          {/* Layer 4 — Core orb: bright white-hot center */}
-          <div className="w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-white via-red-100 to-red-300 absolute left-1/2 top-1/2 shadow-[0_0_12px_3px_rgba(255,255,255,0.6),0_0_30px_8px_rgba(239,68,68,0.45)]">
-            {/* Specular highlight */}
-            <div className="absolute top-[10%] left-[12%] w-[38%] h-[38%] rounded-full bg-white" />
-          </div>
-        </div>
-      </div>
+      {/* Subtle top gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a1225] via-transparent to-transparent pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6" style={{ zIndex: 1 }}>
         {/* Header */}
-        <div className="flex items-end justify-between mb-10 sm:mb-14">
-          <div className="max-w-xl">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs font-semibold text-red-400 uppercase tracking-widest">All Sports</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
-              Every Game.{" "}
-              <span className="bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">
+        <div className="relative flex flex-col items-start gap-6 mb-12 sm:mb-16">
+          {/* Decorative top line */}
+          <div className="w-12 h-[2px] rounded-full bg-gradient-to-r from-red-500 to-orange-500" />
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/[0.08] px-4 py-1.5 backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+            </span>
+            <span className="text-[11px] font-bold text-red-400 uppercase tracking-[0.25em]">All Sports</span>
+          </div>
+
+          {/* Headline */}
+          <div className="flex flex-col gap-3">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.1]">
+              <span className="text-white">Every Game.</span>
+              <br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-red-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
                 Every League.
               </span>
             </h2>
-            <p className="mt-2.5 text-sm sm:text-base text-slate-400 leading-relaxed">
-              From the Premier League to the IPL, UFC Fight Night to the NBA — find it all here.
-            </p>
+
+            {/* Underline accent */}
+            <div className="h-px w-24 bg-gradient-to-r from-red-500/60 via-orange-500/40 to-transparent" />
           </div>
 
-          {/* Controls */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={scrollLeft}
-              className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-700 transition-all backdrop-blur-sm"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={scrollRight}
-              className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-700 transition-all backdrop-blur-sm"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handlePlayPause}
-              className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-700 transition-all backdrop-blur-sm"
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isPlaying ? (
-                <div className="w-2.5 h-2.5 bg-current rounded-sm" />
-              ) : (
-                <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[9px] border-l-current border-b-[5px] border-b-transparent ml-0.5" />
-              )}
-            </button>
-          </div>
+          {/* Subtitle */}
+          <p className="max-w-lg text-base sm:text-lg text-slate-400 leading-relaxed">
+            From the{" "}
+            <span className="text-slate-200 font-medium">Premier League</span> to the{" "}
+            <span className="text-slate-200 font-medium">IPL</span>,{" "}
+            <span className="text-slate-200 font-medium">UFC Fight Night</span> to the{" "}
+            <span className="text-slate-200 font-medium">NBA</span> — find it all here.
+          </p>
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2 mb-6">
+          <button
+            onClick={scrollLeft}
+            className="group/control w-11 h-11 rounded-xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.08] transition-all backdrop-blur-sm"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-5 h-5 transition-transform group-hover/control:-translate-x-0.5" />
+          </button>
+          <button
+            onClick={scrollRight}
+            className="group/control w-11 h-11 rounded-xl border border-white/10 bg-white/[0.04] flex items-center justify-center text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.08] transition-all backdrop-blur-sm"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-5 h-5 transition-transform group-hover/control:translate-x-0.5" />
+          </button>
+          <div className="w-px h-6 bg-white/10 mx-1" />
+          <button
+            onClick={handlePlayPause}
+            className="group/control flex items-center gap-2 px-4 h-11 rounded-xl border border-white/10 bg-white/[0.04] text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.08] transition-all backdrop-blur-sm"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <>
+                <div className="w-1.5 h-3 bg-current rounded-sm" />
+                <span className="text-[11px] font-medium uppercase tracking-wider hidden sm:inline">Pause</span>
+              </>
+            ) : (
+              <>
+                <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[8px] border-l-current border-b-[5px] border-b-transparent ml-0.5" />
+                <span className="text-[11px] font-medium uppercase tracking-wider hidden sm:inline">Play</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Carousel Track */}
         <div className="relative group">
           {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 z-10 bg-gradient-to-r from-slate-950 to-transparent pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 z-10 bg-gradient-to-l from-slate-950 to-transparent pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 z-10 bg-gradient-to-r from-[#050b18] to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 z-10 bg-gradient-to-l from-[#050b18] to-transparent pointer-events-none" />
 
           <div
             ref={trackRef}
@@ -303,7 +306,7 @@ export default function SportsCarousel() {
                   />
 
                   {/* Card body */}
-                  <div className="relative h-full bg-transparent border border-white/[0.06] rounded-2xl overflow-hidden transition-all duration-500 group-hover/card:border-white/[0.14] group-hover/card:-translate-y-1">
+                  <div className="relative h-full bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden transition-all duration-500 group-hover/card:border-white/[0.14] group-hover/card:-translate-y-1 backdrop-blur-sm">
                     {/* Top gradient accent line */}
                     <div
                       className="h-0.5 w-0 group-hover/card:w-full transition-all duration-700 ease-out"
