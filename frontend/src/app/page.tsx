@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import { ArrowUpRight, Clapperboard, Radar, Sparkles, Trophy } from "lucide-react";
 import SportsCarousel from "@/components/SportsCarousel";
 import { HeroSection } from "@/components/landing/AnimatedSportsBook";
+import Footer from "@/components/layout/Footer";
 
 interface BroadcastCardProps {
   icon: ComponentType<{ className?: string }>;
@@ -132,6 +133,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
