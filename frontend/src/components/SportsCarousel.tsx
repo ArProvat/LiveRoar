@@ -198,7 +198,7 @@ export default function SportsCarousel() {
   };
 
   return (
-    <section className="relative py-16 sm:py-24 overflow-hidden bg-slate-950">
+    <section className="relative py-16 sm:py-24 overflow-hidden bg-[#050b18]">
       {/* Background glow effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-600/[0.03] to-transparent pointer-events-none" />
 
@@ -303,7 +303,7 @@ export default function SportsCarousel() {
                   />
 
                   {/* Card body */}
-                  <div className="relative h-full bg-slate-900/90 backdrop-blur-sm border border-slate-800/70 rounded-2xl overflow-hidden transition-all duration-500 group-hover/card:border-transparent group-hover/card:-translate-y-1">
+                  <div className="relative h-full bg-transparent border border-white/[0.06] rounded-2xl overflow-hidden transition-all duration-500 group-hover/card:border-white/[0.14] group-hover/card:-translate-y-1">
                     {/* Top gradient accent line */}
                     <div
                       className="h-0.5 w-0 group-hover/card:w-full transition-all duration-700 ease-out"
@@ -364,17 +364,17 @@ export default function SportsCarousel() {
                       </h3>
 
                       {/* Description */}
-                      <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed mb-auto line-clamp-2">
+                      <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed mb-auto line-clamp-2">
                         {sport.description}
                       </p>
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/60 group-hover/card:border-slate-700/80 transition-colors">
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.08] group-hover/card:border-white/[0.14] transition-colors">
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-semibold" style={{ color: sport.gradientFrom }}>
                             {sport.matchCount}
                           </span>
-                          <span className="text-[10px] text-slate-500">matches</span>
+                          <span className="text-[10px] text-slate-400">matches</span>
                         </div>
                         <div className="flex items-center gap-1 text-xs font-semibold transition-all duration-300 opacity-0 -translate-x-2 group-hover/card:opacity-100 group-hover/card:translate-x-0" style={{ color: sport.gradientFrom }}>
                           Explore
