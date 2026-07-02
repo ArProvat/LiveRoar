@@ -1,12 +1,11 @@
 """Integration tests for auth API endpoints."""
 import os
 import tempfile
-import sqlite3
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app import app
-from app.database import get_db, Base
+from app.database import get_db, Base, async_session, engine as db_engine
 
 
 @pytest.fixture(scope="session")
@@ -25,25 +24,18 @@ async def _engine(db_path):
 
 @pytest.fixture(scope="session", autouse=True)
 async def _setup_db(_engine, db_path):
-    # Use synchronous sqlite3 to wipe everything cleanly
-    conn = sqlite3.connect(db_path)
-    conn.execute("DROP TABLE IF EXISTS notifications")
-    conn.execute("DROP TABLE IF EXISTS chat_messages")
-    conn.execute("DROP TABLE IF EXISTS watch_history")
-    conn.execute("DROP TABLE IF EXISTS favorites")
-    conn.execute("DROP TABLE IF EXISTS matches")
-    conn.execute("DROP TABLE IF EXISTS channels")
-    conn.execute("DROP TABLE IF EXISTS users")
-    conn.execute("DROP TABLE IF EXISTS stream_configs")
-    conn.commit()
-    conn.close()
+    # Remove the file to ensure complete cleanup of tables and indexes
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
-    # Create tables via async engine's run_sync
-    async with _engine.connect() as conn:
-        # Import all models to register them with Base
+    async with _engine.begin() as conn:
         from app.core.models import User, Channel, Match, Favorite, WatchHistory, ChatMessage, Notification, StreamConfig  # noqa: F401
         await conn.run_sync(Base.metadata.create_all)
-        await conn.commit()
+
+    # Patch the module-level async_session so the refresh endpoint (which
+    # imports async_session from app.database directly) uses our test engine.
+    import app.database as db_mod
+    db_mod.async_session = async_sessionmaker(_engine, class_=AsyncSession, expire_on_commit=False)
 
     yield _engine
 
