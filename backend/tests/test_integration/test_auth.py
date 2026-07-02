@@ -3,50 +3,13 @@ import os
 import tempfile
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app import app
-from app.database import get_db, Base, async_session, engine as db_engine
-
-
-@pytest.fixture(scope="session")
-def db_path():
-    tmpdir = tempfile.mkdtemp(prefix="liveroar_test_")
-    return os.path.join(tmpdir, "test.sqlite")
-
-
-@pytest.fixture(scope="session")
-async def _engine(db_path):
-    db_url = f"sqlite+aiosqlite:///{db_path}"
-    engine = create_async_engine(db_url, echo=False)
-    yield engine
-    await engine.dispose()
-
-
-@pytest.fixture(scope="session", autouse=True)
-async def _setup_db(_engine, db_path):
-    # Remove the file to ensure complete cleanup of tables and indexes
-    if os.path.exists(db_path):
-        os.remove(db_path)
-
-    async with _engine.begin() as conn:
-        from app.core.models import User, Channel, Match, Favorite, WatchHistory, ChatMessage, Notification, StreamConfig  # noqa: F401
-        await conn.run_sync(Base.metadata.create_all)
-
-    # Patch the module-level async_session so the refresh endpoint (which
-    # imports async_session from app.database directly) uses our test engine.
-    import app.database as db_mod
-    db_mod.async_session = async_sessionmaker(_engine, class_=AsyncSession, expire_on_commit=False)
-
-    yield _engine
+from app.database import get_db
 
 
 @pytest.fixture
-def _session_maker(_setup_db):
-    return async_sessionmaker(_setup_db, class_=AsyncSession, expire_on_commit=False)
-
-
-@pytest.fixture
-async def auth_client(_setup_db, _session_maker):
+async def auth_client(_session_maker):
     async def override_get_db():
         async with _session_maker() as session:
             try:
